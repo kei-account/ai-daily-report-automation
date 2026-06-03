@@ -1,0 +1,14 @@
+{
+  "name": "ai-daily-report-automation",
+  "version": "0.1.0",
+  "description": "Codex-ready workflow for generating a daily AI intelligence report, DOCX attachment, and structured Chinese email brief.",
+  "main": "src/run.js",
+  "scripts": {
+    "generate": "node src/run.js",
+    "check": "node src/run.js --example"
+  },
+  "dependencies": {
+    "docx": "^9.5.1"
+  },
+  "license": "MIT"
+}

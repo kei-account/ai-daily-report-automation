@@ -1,0 +1,29 @@
+{
+  "date": "2026-06-03",
+  "silicon_valley": [
+    {
+      "topic": "Agentic AI becomes a product strategy focus",
+      "summary": "AI product strategy is shifting from chatbots toward systems that can use tools, plan tasks, and execute multi-step workflows.",
+      "source": "https://example.com/silicon-valley-ai"
+    },
+    {
+      "topic": "AI safety and transparency rules become operational",
+      "summary": "AI governance is moving from broad policy discussion into concrete compliance work for product, legal, and enterprise sales teams.",
+      "source": "https://example.com/ai-regulation"
+    }
+  ],
+  "wall_street_pe": [
+    {
+      "topic": "Private capital continues to fund AI infrastructure",
+      "amount": "$1B+",
+      "summary": "Large AI investments remain focused on frontier models, deployment services, compute, and enterprise infrastructure.",
+      "source": "https://example.com/ai-private-equity"
+    },
+    {
+      "topic": "AI stock outlook depends on monetization quality",
+      "amount": "",
+      "summary": "Public-market enthusiasm remains strong, but investors are paying closer attention to revenue quality, margins, and capital expenditure returns.",
+      "source": "https://example.com/wall-street-ai"
+    }
+  ]
+}
