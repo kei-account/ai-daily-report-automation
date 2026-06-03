@@ -1,5 +1,7 @@
 # AI Daily Report Automation
 
+[中文说明](README.zh-CN.md)
+
 A Codex-ready workflow for generating a daily AI intelligence report:
 
 1. Search current AI news and investment signals.
