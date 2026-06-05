@@ -100,11 +100,74 @@ npm run generate
 - 如果 Gmail 工具可用，直接发送邮件
 - 如果不能直接发送，则创建 Gmail 草稿
 
+## GitHub Actions 自动发送
+
+为了实现真正无人值守的每日发送，仓库已经包含 GitHub Actions workflow：
+
+```text
+.github/workflows/daily-report.yml
+```
+
+它会在每天 `09:00 JST` 运行，也可以在 GitHub 的 Actions 页面手动触发。
+
+你需要在 GitHub 仓库里配置这些 Secrets：
+
+```text
+OPENAI_API_KEY
+GMAIL_USER
+GMAIL_APP_PASSWORD
+REPORT_RECIPIENT
+```
+
+可选 Secrets：
+
+```text
+OPENAI_MODEL
+REPORT_RECIPIENT_NAME
+```
+
+其中：
+
+- `OPENAI_API_KEY`：用于整理新闻并生成结构化日报
+- `GMAIL_USER`：发件 Gmail 地址
+- `GMAIL_APP_PASSWORD`：Gmail 应用专用密码，不是 Gmail 登录密码
+- `REPORT_RECIPIENT`：收件邮箱
+- `OPENAI_MODEL`：可选，默认使用 `gpt-4.1-mini`
+- `REPORT_RECIPIENT_NAME`：可选，默认称呼 `yidan`
+
+## 如何随时改需求
+
+修改这个文件即可调整日报风格和要求：
+
+```text
+config/report_requirements.md
+```
+
+例如你可以改：
+
+- 称呼方式
+- 是否保留幽默开场
+- 更偏投资视角还是产品视角
+- 每个板块的字段
+- 语气和长度
+
+修改这个文件可以调整关注话题和 RSS 来源：
+
+```text
+config/topics.json
+```
+
+本地运行同一套流程：
+
+```bash
+npm run daily
+```
+
 ## Gmail 说明
 
-这个 Node.js 项目本身不直接连接 Gmail。
+GitHub Actions 版本会通过 Gmail SMTP 发送邮件。
 
-在 Codex 工作流里，Gmail 发送由 Gmail connector / plugin 完成。你可以在自动化提示词里配置收件人，也可以用环境变量保存配置，例如：
+Codex 工作流里，Gmail 发送也可以由 Gmail connector / plugin 完成。你可以在自动化提示词里配置收件人，也可以用环境变量保存配置，例如：
 
 ```bash
 REPORT_RECIPIENT=your-email@example.com

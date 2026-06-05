@@ -1,0 +1,21 @@
+{
+  "silicon_valley": [
+    "agentic AI Silicon Valley",
+    "AGI debate agentic AI",
+    "AI safety regulation California Colorado AI Act",
+    "AI platform models agents chips developers"
+  ],
+  "wall_street_pe": [
+    "AI private equity investment deals",
+    "AI startup funding",
+    "Wall Street AI stock outlook",
+    "enterprise AI deployment private equity"
+  ],
+  "rss_feeds": [
+    "https://news.google.com/rss/search?q=agentic+AI+Silicon+Valley&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=AI+private+equity+investment&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=AI+startup+funding&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=Wall+Street+AI+stocks&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=AI+safety+regulation&hl=en-US&gl=US&ceid=US:en"
+  ]
+}

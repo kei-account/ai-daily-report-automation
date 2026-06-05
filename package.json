@@ -5,10 +5,14 @@
   "main": "src/run.js",
   "scripts": {
     "generate": "node src/run.js",
-    "check": "node src/run.js --example"
+    "check": "node src/run.js --example",
+    "daily": "node src/daily_pipeline.js"
   },
   "dependencies": {
-    "docx": "^9.5.1"
+    "docx": "^9.5.1",
+    "nodemailer": "^8.0.10",
+    "openai": "^5.6.0",
+    "rss-parser": "^3.13.0"
   },
   "license": "MIT"
 }

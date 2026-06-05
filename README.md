@@ -91,6 +91,50 @@ The automation should:
 - Send the email via Gmail if available.
 - Fall back to creating a Gmail draft if direct send is unavailable.
 
+## GitHub Actions Automation
+
+For reliable unattended delivery, use the included GitHub Actions workflow:
+
+```text
+.github/workflows/daily-report.yml
+```
+
+It runs every day at `09:00 JST` and can also be triggered manually from the GitHub Actions tab.
+
+Required GitHub Secrets:
+
+```text
+OPENAI_API_KEY
+GMAIL_USER
+GMAIL_APP_PASSWORD
+REPORT_RECIPIENT
+```
+
+Optional GitHub Secrets:
+
+```text
+OPENAI_MODEL
+REPORT_RECIPIENT_NAME
+```
+
+To change the report style, edit:
+
+```text
+config/report_requirements.md
+```
+
+To change source topics and RSS feeds, edit:
+
+```text
+config/topics.json
+```
+
+Run the same pipeline locally:
+
+```bash
+npm run daily
+```
+
 ## Gmail Notes
 
 This repository does not send Gmail directly from Node.js. In the Codex workflow, Gmail is handled by the Gmail connector/plugin.
