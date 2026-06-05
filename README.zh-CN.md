@@ -26,9 +26,10 @@
 - 对收件人的简短称呼
 - 一句简练、轻松的小总结
 - 今日核心摘要
-- 硅谷 AI 热点
-- 华尔街 / PE 投资动态
+- AI 技术角度
+- PE / 投资角度
 - 综合判断
+- 每条信息源的发布时间
 - 来源链接
 
 ## 快速开始
@@ -58,18 +59,24 @@ npm run generate
 ```json
 {
   "date": "YYYY-MM-DD",
-  "silicon_valley": [
+  "lookback_hours": 24,
+  "generated_at": "ISO-8601 timestamp",
+  "ai_technology": [
     {
       "topic": "主题标题",
       "summary": "简短事实摘要。",
+      "impact": "影响判断。",
+      "source_published_at": "ISO-8601 timestamp",
       "source": "https://example.com"
     }
   ],
-  "wall_street_pe": [
+  "pe_investment": [
     {
       "topic": "主题标题",
       "amount": "$100M",
       "summary": "简短事实摘要。",
+      "impact": "影响判断。",
+      "source_published_at": "ISO-8601 timestamp",
       "source": "https://example.com"
     }
   ]
@@ -93,7 +100,8 @@ npm run generate
 自动化任务应该执行：
 
 - 每天重新进行 Web 搜索
-- 使用最新可靠来源
+- 只使用过去 24 小时内发布或更新的信息源
+- 在每条新闻里标注来源时间
 - 避免复用旧测试数据
 - 生成 Word 报告
 - 生成中文结构化邮件正文

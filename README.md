@@ -19,11 +19,12 @@ The project is designed as a public template. It does not include private email 
 - A Gmail-ready Chinese email body with:
   - A short greeting to `yidan` or your configured recipient name
   - A concise, lightly humorous executive summary
-  - Core takeaways
-  - Silicon Valley AI topics
-  - Wall Street / PE AI investment dynamics
-  - Integrated judgment
-  - Source URLs
+- Core takeaways
+- AI technology angle
+- PE / investment angle
+- Integrated judgment
+- Source publication time for every item
+- Source URLs
 
 ## Quick Start
 
@@ -52,18 +53,24 @@ Create `research_data.json` in the project root:
 ```json
 {
   "date": "YYYY-MM-DD",
-  "silicon_valley": [
+  "lookback_hours": 24,
+  "generated_at": "ISO-8601 timestamp",
+  "ai_technology": [
     {
       "topic": "Topic title",
       "summary": "Brief factual summary.",
+      "impact": "Why it matters.",
+      "source_published_at": "ISO-8601 timestamp",
       "source": "https://example.com"
     }
   ],
-  "wall_street_pe": [
+  "pe_investment": [
     {
       "topic": "Topic title",
       "amount": "$100M",
       "summary": "Brief factual summary.",
+      "impact": "Why it matters.",
+      "source_published_at": "ISO-8601 timestamp",
       "source": "https://example.com"
     }
   ]
@@ -85,6 +92,8 @@ Every day at 09:00 in your local timezone
 The automation should:
 
 - Gather fresh web search results each day.
+- Use only sources published or updated within the previous 24 hours.
+- Include source publication time for every selected item.
 - Avoid stale test data.
 - Generate the DOCX report.
 - Generate the Chinese email body.

@@ -1,5 +1,4 @@
 const fs = require('fs');
-const OpenAI = require('openai');
 
 function extractJson(text) {
   const trimmed = text.trim();
@@ -14,25 +13,29 @@ function extractJson(text) {
 
 function fallbackResearch(newsBundle) {
   const items = newsBundle.items || [];
-  const silicon = items.slice(0, 3).map(item => ({
+  const aiTechnology = items.slice(0, 3).map(item => ({
     topic: item.title,
     summary: item.summary || item.title,
-    impact: '需继续观察其对 AI 产品、平台生态和企业采用节奏的影响。',
-    source: item.link
+    impact: '需继续观察其对 AI 技术路线、产品平台和企业采用节奏的影响。',
+    source: item.link,
+    source_published_at: item.published_at
   }));
 
-  const wallStreet = items.slice(3, 6).map(item => ({
+  const peInvestment = items.slice(3, 6).map(item => ({
     topic: item.title,
     amount: '',
     summary: item.summary || item.title,
-    impact: '需继续观察其对资本市场、AI 投资和企业部署的影响。',
-    source: item.link
+    impact: '需继续观察其对资本市场、PE 投资和企业 AI 部署的影响。',
+    source: item.link,
+    source_published_at: item.published_at
   }));
 
   return {
     date: newsBundle.date,
-    silicon_valley: silicon,
-    wall_street_pe: wallStreet
+    lookback_hours: newsBundle.lookback_hours || 24,
+    generated_at: newsBundle.generated_at,
+    ai_technology: aiTechnology,
+    pe_investment: peInvestment
   };
 }
 
@@ -44,6 +47,7 @@ async function buildResearchData(newsBundle, options = {}) {
   }
 
   const requirements = fs.readFileSync(options.requirementsPath || 'config/report_requirements.md', 'utf8');
+  const OpenAI = require('openai');
   const client = new OpenAI({ apiKey });
   const model = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
 
@@ -53,6 +57,8 @@ Requirements:
 ${requirements}
 
 Today's date: ${newsBundle.date}
+Report generation time: ${newsBundle.generated_at}
+Only use items within the last ${newsBundle.lookback_hours || 24} hours. The provided list has already been filtered, but you must still preserve and display each item's source_published_at.
 
 Available news/RSS items:
 ${JSON.stringify(newsBundle.items, null, 2)}
@@ -60,21 +66,24 @@ ${JSON.stringify(newsBundle.items, null, 2)}
 Return JSON only, with this exact shape:
 {
   "date": "YYYY-MM-DD",
-  "silicon_valley": [
-    {"topic": "...", "summary": "...", "impact": "...", "source": "..."}
+  "lookback_hours": 24,
+  "generated_at": "ISO-8601 timestamp",
+  "ai_technology": [
+    {"topic": "...", "summary": "...", "impact": "...", "source": "...", "source_published_at": "ISO-8601 timestamp"}
   ],
-  "wall_street_pe": [
-    {"topic": "...", "amount": "", "summary": "...", "impact": "...", "source": "..."}
+  "pe_investment": [
+    {"topic": "...", "amount": "", "summary": "...", "impact": "...", "source": "...", "source_published_at": "ISO-8601 timestamp"}
   ]
 }
 
 Rules:
 - Write all topic, summary, and impact fields in Simplified Chinese.
-- Select 3 items for silicon_valley and 3 items for wall_street_pe when possible.
-- Preserve source URLs from the input.
+- Select up to 3 items for ai_technology and up to 3 items for pe_investment when possible.
+- Preserve source URLs and source_published_at timestamps from the input.
 - Do not invent facts, deal amounts, or source URLs.
 - If amount is unknown, use an empty string.
-- Prefer current and reliable items.`;
+- Every selected item must be from the last ${newsBundle.lookback_hours || 24} hours.
+- Summarize based only on the latest items provided.`;
 
   const response = await client.responses.create({
     model,

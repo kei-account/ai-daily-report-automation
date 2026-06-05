@@ -1,28 +1,38 @@
 {
   "date": "2026-06-03",
-  "silicon_valley": [
+  "lookback_hours": 24,
+  "generated_at": "2026-06-03T00:00:00.000Z",
+  "ai_technology": [
     {
       "topic": "Agentic AI becomes a product strategy focus",
       "summary": "AI product strategy is shifting from chatbots toward systems that can use tools, plan tasks, and execute multi-step workflows.",
+      "impact": "Agent capabilities may reshape enterprise workflows, developer tooling, and platform strategy.",
+      "source_published_at": "2026-06-02T18:30:00.000Z",
       "source": "https://example.com/silicon-valley-ai"
     },
     {
       "topic": "AI safety and transparency rules become operational",
       "summary": "AI governance is moving from broad policy discussion into concrete compliance work for product, legal, and enterprise sales teams.",
+      "impact": "Compliance maturity may become a stronger enterprise purchasing requirement.",
+      "source_published_at": "2026-06-02T20:15:00.000Z",
       "source": "https://example.com/ai-regulation"
     }
   ],
-  "wall_street_pe": [
+  "pe_investment": [
     {
       "topic": "Private capital continues to fund AI infrastructure",
       "amount": "$1B+",
       "summary": "Large AI investments remain focused on frontier models, deployment services, compute, and enterprise infrastructure.",
+      "impact": "PE and growth investors may continue to treat AI infrastructure as a strategic asset class.",
+      "source_published_at": "2026-06-02T21:00:00.000Z",
       "source": "https://example.com/ai-private-equity"
     },
     {
       "topic": "AI stock outlook depends on monetization quality",
       "amount": "",
       "summary": "Public-market enthusiasm remains strong, but investors are paying closer attention to revenue quality, margins, and capital expenditure returns.",
+      "impact": "AI-linked equities may be judged more by execution quality than by narrative alone.",
+      "source_published_at": "2026-06-02T23:40:00.000Z",
       "source": "https://example.com/wall-street-ai"
     }
   ]

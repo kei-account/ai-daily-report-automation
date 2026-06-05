@@ -71,12 +71,30 @@ function bullet(text) {
   });
 }
 
-function sourceLine(url) {
+function formatSourceTime(value) {
+  if (!value) return 'Not provided';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString('en-US', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }) + ' JST';
+}
+
+function sourceLine(item) {
+  const url = item.source;
   if (!url) return body('');
 
   return new Paragraph({
     spacing: { before: 0, after: 160, line: 260 },
     children: [
+      textRun('Source time: ', { size: 18, bold: true, color: '555555' }),
+      textRun(`${formatSourceTime(item.source_published_at)} | `, { size: 18, color: '555555' }),
       textRun('Source: ', { size: 18, bold: true, color: '555555' }),
       textRun(url, { size: 18, color: '555555' })
     ]
@@ -136,20 +154,20 @@ async function generateReport(researchData, options = {}) {
           spacing: { before: 0, after: 360 },
           children: [textRun(displayDate, { size: 24, color: '555555' })]
         }),
-        body('Daily intelligence brief covering Silicon Valley AI topics and Wall Street / private equity AI investment dynamics.'),
-        heading1('PART 1 | Silicon Valley AI Hot Topics'),
-        ...(researchData.silicon_valley || []).flatMap(item => [
+        body(`Daily intelligence brief based on sources published within the last ${researchData.lookback_hours || 24} hours.`),
+        heading1('PART 1 | AI Technology'),
+        ...(researchData.ai_technology || researchData.silicon_valley || []).flatMap(item => [
           heading2(item.topic),
           body(item.summary),
-          sourceLine(item.source)
+          sourceLine(item)
         ]),
         new Paragraph({ children: [new PageBreak()] }),
-        heading1('PART 2 | Wall Street and PE Investment Dynamics'),
-        ...(researchData.wall_street_pe || []).flatMap(item => [
+        heading1('PART 2 | PE and Investment'),
+        ...(researchData.pe_investment || researchData.wall_street_pe || []).flatMap(item => [
           heading2(item.topic),
           body(item.summary),
           ...(item.amount ? [bullet(`Deal size: ${item.amount}`)] : []),
-          sourceLine(item.source)
+          sourceLine(item)
         ]),
         new Paragraph({
           alignment: AlignmentType.CENTER,

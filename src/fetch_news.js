@@ -29,6 +29,14 @@ function uniqByLink(items) {
   return result;
 }
 
+function isWithinLastHours(isoDate, hours, now = new Date()) {
+  if (!isoDate) return false;
+  const published = new Date(isoDate);
+  if (Number.isNaN(published.getTime())) return false;
+  const ageMs = now.getTime() - published.getTime();
+  return ageMs >= 0 && ageMs <= hours * 60 * 60 * 1000;
+}
+
 async function fetchFeed(url) {
   const response = await fetch(url, {
     headers: {
@@ -56,20 +64,25 @@ async function fetchNews(options = {}) {
   const topicsPath = options.topicsPath || 'config/topics.json';
   const topics = JSON.parse(fs.readFileSync(topicsPath, 'utf8'));
   const feeds = topics.rss_feeds || [];
+  const lookbackHours = options.lookbackHours || 24;
+  const now = options.now ? new Date(options.now) : new Date();
 
   const batches = await Promise.allSettled(feeds.map(fetchFeed));
   const items = batches.flatMap(result => (result.status === 'fulfilled' ? result.value : []));
+  const recentItems = items.filter(item => isWithinLastHours(item.published_at, lookbackHours, now));
 
   return {
     date: options.date || new Date().toISOString().slice(0, 10),
+    lookback_hours: lookbackHours,
+    generated_at: now.toISOString(),
     queries: {
-      silicon_valley: topics.silicon_valley || [],
-      wall_street_pe: topics.wall_street_pe || []
+      ai_technology: topics.ai_technology || topics.silicon_valley || [],
+      pe_investment: topics.pe_investment || topics.wall_street_pe || []
     },
-    items: uniqByLink(items)
+    items: uniqByLink(recentItems)
       .sort((a, b) => String(b.published_at || '').localeCompare(String(a.published_at || '')))
       .slice(0, 40)
   };
 }
 
-module.exports = { fetchNews };
+module.exports = { fetchNews, isWithinLastHours };

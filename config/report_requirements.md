@@ -12,15 +12,21 @@ Tone:
 
 Core sections:
 1. 今日核心摘要
-2. 硅谷 AI 热点
-3. 华尔街 / PE 投资动态
+2. AI 技术角度
+3. PE / 投资角度
 4. 综合判断
 
 Each news item should include:
 - 主题
 - 要点
 - 影响
+- 来源时间
 - 来源
+
+Freshness requirement:
+- Only use news published or updated within the last 24 hours.
+- Every selected item must include source_published_at.
+- If there is not enough reliable information in a section within the last 24 hours, say so instead of filling with older news.
 
 Topics to prioritize:
 - Agentic AI
