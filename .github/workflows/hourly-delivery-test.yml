@@ -1,6 +1,12 @@
 name: Hourly Delivery Test
 
 on:
+  schedule:
+    # Temporary 10-minute delivery test.
+    # Active send window: 2026-06-05 12:00-12:29 UTC
+    # = 2026-06-05 21:00-21:29 JST.
+    # Expected send attempts: 12:00, 12:10, 12:20 UTC.
+    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -21,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate and send test reports every 10 minutes
+      - name: Generate and send test report
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
@@ -30,14 +36,21 @@ jobs:
           REPORT_RECIPIENT: ${{ secrets.REPORT_RECIPIENT }}
           REPORT_RECIPIENT_NAME: ${{ secrets.REPORT_RECIPIENT_NAME }}
         run: |
-          for i in 1 2 3; do
-            echo "Starting test send $i of 3"
-            npm run daily
-            if [ "$i" != "3" ]; then
-              echo "Waiting 10 minutes before next test send..."
-              sleep 600
-            fi
-          done
+          now="$(date -u +'%Y-%m-%d %H:%M')"
+          minute="$(date -u +'%M')"
+          echo "Current UTC time: $now"
+
+          if [ "$(date -u +'%Y-%m-%d %H')" != "2026-06-05 12" ]; then
+            echo "Outside temporary test hour; skipping send."
+            exit 0
+          fi
+
+          if [ "$minute" -ge 30 ]; then
+            echo "Temporary test window has ended; skipping send."
+            exit 0
+          fi
+
+          npm run daily
 
       - name: Upload generated artifacts
         if: always()
