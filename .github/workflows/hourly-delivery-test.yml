@@ -1,18 +1,12 @@
 name: Hourly Delivery Test
 
 on:
-  schedule:
-    # Temporary test schedule for 2026-06-05 JST:
-    # 20:30, 20:40, 20:50 JST = 11:30, 11:40, 11:50 UTC.
-    - cron: "30 11 5 6 *"
-    - cron: "40 11 5 6 *"
-    - cron: "50 11 5 6 *"
   workflow_dispatch:
 
 jobs:
   send-test-report:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
 
     steps:
       - name: Checkout repository
@@ -27,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate and send test report
+      - name: Generate and send test reports every 10 minutes
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
@@ -35,7 +29,15 @@ jobs:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           REPORT_RECIPIENT: ${{ secrets.REPORT_RECIPIENT }}
           REPORT_RECIPIENT_NAME: ${{ secrets.REPORT_RECIPIENT_NAME }}
-        run: npm run daily
+        run: |
+          for i in 1 2 3; do
+            echo "Starting test send $i of 3"
+            npm run daily
+            if [ "$i" != "3" ]; then
+              echo "Waiting 10 minutes before next test send..."
+              sleep 600
+            fi
+          done
 
       - name: Upload generated artifacts
         if: always()
