@@ -1,13 +1,19 @@
-name: Hourly Delivery Test
+name: Scheduled One-Time Send Test
 
 on:
   schedule:
-    # Temporary 10-minute delivery test.
-    # Active send window: 2026-06-05 12:00-12:29 UTC
-    # = 2026-06-05 21:00-21:29 JST.
-    # Expected send attempts: 12:00, 12:10, 12:20 UTC.
-    - cron: "*/10 * * * *"
+    # Temporary one-time schedule test. GitHub may delay schedule events.
+    # This workflow disables itself after a successful send to avoid duplicates.
+    - cron: "*/5 * * * *"
   workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: scheduled-one-time-send-test
+  cancel-in-progress: false
 
 jobs:
   send-test-report:
@@ -36,21 +42,15 @@ jobs:
           REPORT_RECIPIENT: ${{ secrets.REPORT_RECIPIENT }}
           REPORT_RECIPIENT_NAME: ${{ secrets.REPORT_RECIPIENT_NAME }}
         run: |
-          now="$(date -u +'%Y-%m-%d %H:%M')"
-          minute="$(date -u +'%M')"
-          echo "Current UTC time: $now"
-
-          if [ "$(date -u +'%Y-%m-%d %H')" != "2026-06-05 12" ]; then
-            echo "Outside temporary test hour; skipping send."
-            exit 0
-          fi
-
-          if [ "$minute" -ge 30 ]; then
-            echo "Temporary test window has ended; skipping send."
-            exit 0
-          fi
-
+          echo "Triggered by: $GITHUB_EVENT_NAME"
+          echo "Current UTC time: $(date -u +'%Y-%m-%d %H:%M:%S')"
           npm run daily
+
+      - name: Disable this temporary test workflow after successful send
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow disable "Scheduled One-Time Send Test"
 
       - name: Upload generated artifacts
         if: always()
