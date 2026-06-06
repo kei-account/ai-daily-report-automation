@@ -68,6 +68,7 @@ Return JSON only, with this exact shape:
   "date": "YYYY-MM-DD",
   "lookback_hours": 24,
   "generated_at": "ISO-8601 timestamp",
+  "daily_summary": "A concise Simplified Chinese summary of today's information based only on the selected last-24h items.",
   "ai_technology": [
     {"topic": "...", "summary": "...", "impact": "...", "source": "...", "source_published_at": "ISO-8601 timestamp"}
   ],
@@ -78,6 +79,7 @@ Return JSON only, with this exact shape:
 
 Rules:
 - Write all topic, summary, and impact fields in Simplified Chinese.
+- daily_summary must summarize today's actual information signals, not explain the report rules. It should mention both AI technology and PE/investment angles when data is available.
 - Select up to 3 items for ai_technology and up to 3 items for pe_investment when possible.
 - Preserve source URLs and source_published_at timestamps from the input.
 - Do not invent facts, deal amounts, or source URLs.

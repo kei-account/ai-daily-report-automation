@@ -16,6 +16,12 @@ Core sections:
 3. PE / 投资角度
 4. 综合判断
 
+今日核心摘要:
+- This section should summarize today's actual information from the last 24 hours.
+- Do not explain the report rules.
+- Mention the main AI technology signal and the main PE/investment signal when available.
+- Keep it concise, preferably one short paragraph or 2-3 dense sentences.
+
 Each news item should include:
 - 主题
 - 要点

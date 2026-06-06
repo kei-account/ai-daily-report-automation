@@ -27,6 +27,17 @@ function formatSectionItem(item, index) {
    来源：${item.source || '未提供'}`;
 }
 
+function buildDailySummary(researchData, lookbackHours) {
+  if (researchData.daily_summary) return researchData.daily_summary;
+
+  const aiItems = researchData.ai_technology || researchData.silicon_valley || [];
+  const investmentItems = researchData.pe_investment || researchData.wall_street_pe || [];
+  const aiLead = aiItems[0]?.topic || 'AI 技术侧暂无明确单一主线';
+  const investmentLead = investmentItems[0]?.topic || 'PE / 投资侧暂无明确单一主线';
+
+  return `过去 ${lookbackHours} 小时内，AI 技术侧的主要信号是「${aiLead}」；PE / 投资侧的主要信号是「${investmentLead}」。整体来看，今日信息更适合从“技术能否形成可部署能力”与“资本是否看到可计价回报”两条线并行观察。`;
+}
+
 function generateChineseEmail(researchData, options = {}) {
   const recipientName = options.recipientName || process.env.REPORT_RECIPIENT_NAME || 'yidan';
   const now = options.date ? new Date(options.date) : new Date();
@@ -46,6 +57,7 @@ function generateChineseEmail(researchData, options = {}) {
     .join('\n\n');
   const lookbackHours = researchData.lookback_hours || 24;
   const generatedAt = formatSourceTime(researchData.generated_at || now.toISOString());
+  const dailySummary = buildDailySummary(researchData, lookbackHours);
 
   return `${recipientName}，早上好。
 
@@ -54,10 +66,7 @@ function generateChineseEmail(researchData, options = {}) {
 以下是 ${todayZh} 的 AI 日报。本期只整理过去 ${lookbackHours} 小时内发布或更新的信息源，并在每条新闻下标注来源时间。生成时间：${generatedAt}。
 
 一、今日核心摘要
-1. 本报告仅基于最近 ${lookbackHours} 小时内的新闻源，优先保证时效性和来源可追溯。
-2. AI 技术角度重点观察模型、Agent、基础设施、监管与企业采用的新变化。
-3. PE/投资角度重点观察融资、并购、企业 AI 部署、资本市场叙事和估值信号。
-4. 若某一板块暂无足够可靠的 24 小时内信息，报告会明确标注信息不足。
+${dailySummary}
 
 二、AI 技术角度
 ${aiTechnology || '过去 24 小时内暂无足够可靠的新信息。'}
