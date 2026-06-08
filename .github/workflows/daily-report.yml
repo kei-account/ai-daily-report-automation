@@ -1,9 +1,8 @@
 name: Daily AI Report
 
 on:
-  schedule:
-    # 09:00 JST = 00:00 UTC
-    - cron: "0 0 * * *"
+  # Scheduling is handled by cron-job.org via workflow_dispatch.
+  # Keep GitHub's built-in schedule disabled to avoid duplicate daily emails.
   workflow_dispatch:
 
 jobs:
