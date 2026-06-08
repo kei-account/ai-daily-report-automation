@@ -14,6 +14,29 @@
 
 这个仓库是公开模板，不包含私人邮箱、真实凭据、已生成报告或 Gmail token。
 
+## 架构图
+
+```mermaid
+flowchart TD
+  A["cron-job.org<br/>每天 09:00 JST 触发"] -->|workflow_dispatch API| B["GitHub Actions<br/>daily-report.yml"]
+  B --> C["安装 Node 依赖<br/>npm ci"]
+  C --> D["抓取最新信息源<br/>src/fetch_news.js"]
+  D --> E["过滤过去 24 小时新闻<br/>必须有发布时间"]
+  E --> F["OpenAI 整理与总结<br/>src/llm_research.js"]
+  F --> G["research_data.json<br/>AI 技术 + PE/投资"]
+  G --> H["生成 Word 报告<br/>src/create_report.js"]
+  G --> I["生成中文邮件<br/>src/generate_email.js"]
+  H --> J["Gmail SMTP 发送<br/>src/send_email.js"]
+  I --> J
+  J --> K["收件箱<br/>日报正文 + DOCX 附件"]
+
+  L["config/report_requirements.md<br/>语气、结构、写作要求"] --> F
+  M["config/topics.json<br/>RSS 来源与关注话题"] --> D
+  N["GitHub Secrets<br/>OPENAI_API_KEY、Gmail 凭据、收件人"] --> B
+```
+
+正式定时器由 cron-job.org 负责，它通过 `workflow_dispatch` 触发 GitHub Actions。GitHub 自带 `schedule` 已关闭，避免一天重复发送两封。
+
 ## 生成内容
 
 运行后会生成：
@@ -116,7 +139,7 @@ npm run generate
 .github/workflows/daily-report.yml
 ```
 
-它会在每天 `09:00 JST` 运行，也可以在 GitHub 的 Actions 页面手动触发。
+定时由 cron-job.org 负责，它会通过 GitHub 的 `workflow_dispatch` API 触发这个 workflow。你也可以在 GitHub 的 Actions 页面手动触发。
 
 你需要在 GitHub 仓库里配置这些 Secrets：
 

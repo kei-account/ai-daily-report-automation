@@ -12,6 +12,29 @@ A Codex-ready workflow for generating a daily AI intelligence report:
 
 The project is designed as a public template. It does not include private email addresses, generated reports, or live credentials.
 
+## Architecture
+
+```mermaid
+flowchart TD
+  A["cron-job.org<br/>Daily 09:00 JST trigger"] -->|workflow_dispatch API| B["GitHub Actions<br/>daily-report.yml"]
+  B --> C["Install Node dependencies<br/>npm ci"]
+  C --> D["Fetch recent sources<br/>src/fetch_news.js"]
+  D --> E["Filter last 24h sources<br/>published_at required"]
+  E --> F["OpenAI summarization<br/>src/llm_research.js"]
+  F --> G["research_data.json<br/>AI technology + PE/investment"]
+  G --> H["Generate DOCX report<br/>src/create_report.js"]
+  G --> I["Generate Chinese email<br/>src/generate_email.js"]
+  H --> J["Gmail SMTP send<br/>src/send_email.js"]
+  I --> J
+  J --> K["Recipient inbox<br/>daily report + DOCX attachment"]
+
+  L["config/report_requirements.md<br/>style, structure, tone"] --> F
+  M["config/topics.json<br/>RSS feeds + topic focus"] --> D
+  N["GitHub Secrets<br/>OPENAI_API_KEY, Gmail credentials, recipient"] --> B
+```
+
+The production timer is external: cron-job.org calls GitHub Actions through `workflow_dispatch`. GitHub's built-in `schedule` trigger is disabled to avoid duplicate reports.
+
 ## What It Produces
 
 - `outputs/AI_Daily_Report_YYYY-MM-DD.docx`
@@ -108,7 +131,7 @@ For reliable unattended delivery, use the included GitHub Actions workflow:
 .github/workflows/daily-report.yml
 ```
 
-It runs every day at `09:00 JST` and can also be triggered manually from the GitHub Actions tab.
+Scheduling is handled by cron-job.org, which triggers this workflow through GitHub's `workflow_dispatch` API. The workflow can also be triggered manually from the GitHub Actions tab.
 
 Required GitHub Secrets:
 
