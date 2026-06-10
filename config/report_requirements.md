@@ -7,8 +7,9 @@ Language: Simplified Chinese.
 Tone:
 - Professional and concise.
 - Suitable for an executive or investor.
-- Start with one short, lightly humorous summary before the formal report.
-- The humor should be subtle, elegant, and brief.
+- Start with one short internet-style comment before the formal report.
+- The opening should be based on today's actual news, lively and concise, with light wit.
+- Avoid generic repeated lines, clickbait, memes, childish jokes, or exaggerated sarcasm.
 
 Core sections:
 1. 今日核心摘要
@@ -21,6 +22,7 @@ Core sections:
 - Do not explain the report rules.
 - Mention the main AI technology signal and the main PE/investment signal when available.
 - Keep it concise, preferably one short paragraph or 2-3 dense sentences.
+- The summary must be specific to the selected daily news and should not reuse yesterday's sentence structure.
 
 Each news item should include:
 - 主题

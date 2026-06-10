@@ -38,6 +38,26 @@ function buildDailySummary(researchData, lookbackHours) {
   return `过去 ${lookbackHours} 小时内，AI 技术侧的主要信号是「${aiLead}」；PE / 投资侧的主要信号是「${investmentLead}」。整体来看，今日信息更适合从“技术能否形成可部署能力”与“资本是否看到可计价回报”两条线并行观察。`;
 }
 
+function buildOpeningLine(researchData) {
+  if (researchData.opening_line) return researchData.opening_line;
+
+  const aiItems = researchData.ai_technology || researchData.silicon_valley || [];
+  const investmentItems = researchData.pe_investment || researchData.wall_street_pe || [];
+  const aiLead = aiItems[0]?.topic;
+  const investmentLead = investmentItems[0]?.topic;
+
+  if (aiLead && investmentLead) {
+    return `今天的 AI 新闻像一场双线直播：技术侧盯着「${aiLead}」，资本侧盯着「${investmentLead}」，热闹但值得挑重点看。`;
+  }
+  if (aiLead) {
+    return `今天 AI 技术侧的镜头比较集中：「${aiLead}」成了最值得先看的那条线。`;
+  }
+  if (investmentLead) {
+    return `今天资本侧先举手：「${investmentLead}」提醒我们，AI 故事最后还是要落到钱和效率上。`;
+  }
+  return '今天的 AI 新闻不算喧哗，但仍值得从技术和资本两条线快速扫一遍。';
+}
+
 function generateChineseEmail(researchData, options = {}) {
   const recipientName = options.recipientName || process.env.REPORT_RECIPIENT_NAME || 'yidan';
   const now = options.date ? new Date(options.date) : new Date();
@@ -58,10 +78,11 @@ function generateChineseEmail(researchData, options = {}) {
   const lookbackHours = researchData.lookback_hours || 24;
   const generatedAt = formatSourceTime(researchData.generated_at || now.toISOString());
   const dailySummary = buildDailySummary(researchData, lookbackHours);
+  const openingLine = buildOpeningLine(researchData);
 
   return `${recipientName}，早上好。
 
-今天的 AI 圈依旧很忙：技术在赶路，资本在看路牌，大家都希望自己不是最后一个上车的人。
+${openingLine}
 
 以下是 ${todayZh} 的 AI 日报。本期只整理过去 ${lookbackHours} 小时内发布或更新的信息源，并在每条新闻下标注来源时间。生成时间：${generatedAt}。
 
