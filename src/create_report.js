@@ -13,7 +13,6 @@ const {
 } = require('docx');
 const fs = require('fs');
 const path = require('path');
-const { buildDailySummary, buildOpeningLine } = require('./generate_email');
 
 function getDateString(date = new Date()) {
   return date.toISOString().slice(0, 10);
@@ -113,13 +112,41 @@ function sourceLine(item) {
 }
 
 function itemBlocks(item) {
+  const topic = item.topic_en || item.topic;
+  const summary = item.summary_en || item.summary;
+  const impact = item.impact_en || item.impact || 'Needs continued monitoring for business and investment implications.';
+
   return [
-    heading2(item.topic),
-    labeledParagraph('Key point', item.summary),
-    labeledParagraph('Impact', item.impact || 'Needs continued monitoring for business and investment implications.'),
+    heading2(topic),
+    labeledParagraph('Key point', summary),
+    labeledParagraph('Impact', impact),
     ...(item.amount ? [bullet(`Deal size: ${item.amount}`)] : []),
     sourceLine(item)
   ];
+}
+
+function buildReportOpeningLine(researchData) {
+  if (researchData.opening_line_en) return researchData.opening_line_en;
+  if (researchData.opening_line) return researchData.opening_line;
+
+  const aiItems = researchData.ai_technology || researchData.silicon_valley || [];
+  const investmentItems = researchData.pe_investment || researchData.wall_street_pe || [];
+  const aiLead = aiItems[0]?.topic_en || aiItems[0]?.topic || 'AI technology signals';
+  const investmentLead = investmentItems[0]?.topic_en || investmentItems[0]?.topic || 'AI investment signals';
+
+  return `Today's AI brief is led by ${aiLead}, while the capital side is watching ${investmentLead}. The key question is whether technical progress is turning into deployable products, measurable efficiency, and investable revenue.`;
+}
+
+function buildReportDailySummary(researchData, lookbackHours) {
+  if (researchData.daily_summary_en) return researchData.daily_summary_en;
+  if (researchData.daily_summary) return researchData.daily_summary;
+
+  const aiItems = researchData.ai_technology || researchData.silicon_valley || [];
+  const investmentItems = researchData.pe_investment || researchData.wall_street_pe || [];
+  const aiLead = aiItems[0]?.topic_en || aiItems[0]?.topic || 'no single dominant AI technology signal';
+  const investmentLead = investmentItems[0]?.topic_en || investmentItems[0]?.topic || 'no single dominant PE/investment signal';
+
+  return `Over the last ${lookbackHours} hours, the main AI technology signal is "${aiLead}", while the main PE/investment signal is "${investmentLead}".`;
 }
 
 async function generateReport(researchData, options = {}) {
@@ -128,8 +155,8 @@ async function generateReport(researchData, options = {}) {
   const displayDate = getDisplayDate(now);
   const outputDir = options.outputDir || process.env.OUTPUT_DIR || path.join(process.cwd(), 'outputs');
   const lookbackHours = researchData.lookback_hours || 24;
-  const openingLine = buildOpeningLine(researchData);
-  const dailySummary = buildDailySummary(researchData, lookbackHours);
+  const openingLine = buildReportOpeningLine(researchData);
+  const dailySummary = buildReportDailySummary(researchData, lookbackHours);
   fs.mkdirSync(outputDir, { recursive: true });
 
   const doc = new Document({

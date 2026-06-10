@@ -2,20 +2,36 @@
   "date": "2026-06-03",
   "lookback_hours": 24,
   "generated_at": "2026-06-03T00:00:00.000Z",
-  "opening_line": "今天的 AI 新闻像一场双线直播：Agent 继续往产品里钻，资本则在旁边算它到底值多少钱。热闹归热闹，但真正值得看的不是谁又发了一个概念，而是谁能把能力变成产品、收入和估值支撑。今天这份日报，就按技术落地和资本买账两条线来拆。",
-  "daily_summary": "过去 24 小时内，AI 技术侧继续围绕 Agent 产品化和 AI 治理落地展开；PE / 投资侧则更关注 AI 基础设施和商业化质量。整体来看，市场正在从概念热度转向可部署能力与可计价回报。",
+  "opening_line": "Today's AI news has two live feeds: agents are moving deeper into products, while capital is still calculating what that progress is worth. The important signal is not who has the loudest narrative, but who can turn capability into products, revenue, and valuation support.",
+  "opening_line_en": "Today's AI news has two live feeds: agents are moving deeper into products, while capital is still calculating what that progress is worth. The important signal is not who has the loudest narrative, but who can turn capability into products, revenue, and valuation support.",
+  "opening_line_zh": "今天的 AI 新闻像一场双线直播：Agent 继续往产品里钻，资本则在旁边算它到底值多少钱。热闹归热闹，但真正值得看的不是谁又发了一个概念，而是谁能把能力变成产品、收入和估值支撑。今天这份日报，就按技术落地和资本买账两条线来拆。",
+  "daily_summary": "Over the last 24 hours, AI technology signals continued to center on agent productization and operational AI governance, while PE and investment signals focused more on AI infrastructure and commercialization quality.",
+  "daily_summary_en": "Over the last 24 hours, AI technology signals continued to center on agent productization and operational AI governance, while PE and investment signals focused more on AI infrastructure and commercialization quality.",
+  "daily_summary_zh": "过去 24 小时内，AI 技术侧继续围绕 Agent 产品化和 AI 治理落地展开；PE / 投资侧则更关注 AI 基础设施和商业化质量。整体来看，市场正在从概念热度转向可部署能力与可计价回报。",
   "ai_technology": [
     {
       "topic": "Agentic AI becomes a product strategy focus",
+      "topic_en": "Agentic AI becomes a product strategy focus",
+      "topic_zh": "Agentic AI 成为产品战略焦点",
       "summary": "AI product strategy is shifting from chatbots toward systems that can use tools, plan tasks, and execute multi-step workflows.",
+      "summary_en": "AI product strategy is shifting from chatbots toward systems that can use tools, plan tasks, and execute multi-step workflows.",
+      "summary_zh": "AI 产品策略正在从聊天机器人转向能够调用工具、规划任务并执行多步骤工作流的系统。",
       "impact": "Agent capabilities may reshape enterprise workflows, developer tooling, and platform strategy.",
+      "impact_en": "Agent capabilities may reshape enterprise workflows, developer tooling, and platform strategy.",
+      "impact_zh": "Agent 能力可能重塑企业工作流、开发者工具和平台战略。",
       "source_published_at": "2026-06-02T18:30:00.000Z",
       "source": "https://example.com/silicon-valley-ai"
     },
     {
       "topic": "AI safety and transparency rules become operational",
+      "topic_en": "AI safety and transparency rules become operational",
+      "topic_zh": "AI 安全与透明度规则进入执行阶段",
       "summary": "AI governance is moving from broad policy discussion into concrete compliance work for product, legal, and enterprise sales teams.",
+      "summary_en": "AI governance is moving from broad policy discussion into concrete compliance work for product, legal, and enterprise sales teams.",
+      "summary_zh": "AI 治理正在从宏观政策讨论进入产品、法务和企业销售团队的具体合规工作。",
       "impact": "Compliance maturity may become a stronger enterprise purchasing requirement.",
+      "impact_en": "Compliance maturity may become a stronger enterprise purchasing requirement.",
+      "impact_zh": "合规成熟度可能成为企业采购 AI 产品时更重要的门槛。",
       "source_published_at": "2026-06-02T20:15:00.000Z",
       "source": "https://example.com/ai-regulation"
     }
@@ -23,17 +39,29 @@
   "pe_investment": [
     {
       "topic": "Private capital continues to fund AI infrastructure",
+      "topic_en": "Private capital continues to fund AI infrastructure",
+      "topic_zh": "私募资本继续加码 AI 基础设施",
       "amount": "$1B+",
       "summary": "Large AI investments remain focused on frontier models, deployment services, compute, and enterprise infrastructure.",
+      "summary_en": "Large AI investments remain focused on frontier models, deployment services, compute, and enterprise infrastructure.",
+      "summary_zh": "大额 AI 投资仍集中在前沿模型、部署服务、算力和企业级基础设施。",
       "impact": "PE and growth investors may continue to treat AI infrastructure as a strategic asset class.",
+      "impact_en": "PE and growth investors may continue to treat AI infrastructure as a strategic asset class.",
+      "impact_zh": "PE 和成长型投资人可能继续把 AI 基础设施视为战略资产类别。",
       "source_published_at": "2026-06-02T21:00:00.000Z",
       "source": "https://example.com/ai-private-equity"
     },
     {
       "topic": "AI stock outlook depends on monetization quality",
+      "topic_en": "AI stock outlook depends on monetization quality",
+      "topic_zh": "AI 股票前景取决于变现质量",
       "amount": "",
       "summary": "Public-market enthusiasm remains strong, but investors are paying closer attention to revenue quality, margins, and capital expenditure returns.",
+      "summary_en": "Public-market enthusiasm remains strong, but investors are paying closer attention to revenue quality, margins, and capital expenditure returns.",
+      "summary_zh": "公开市场热情仍然较强，但投资人正在更关注收入质量、利润率和资本开支回报。",
       "impact": "AI-linked equities may be judged more by execution quality than by narrative alone.",
+      "impact_en": "AI-linked equities may be judged more by execution quality than by narrative alone.",
+      "impact_zh": "AI 相关股票可能越来越多地按执行质量定价，而不是只看叙事热度。",
       "source_published_at": "2026-06-02T23:40:00.000Z",
       "source": "https://example.com/wall-street-ai"
     }

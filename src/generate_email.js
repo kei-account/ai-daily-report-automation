@@ -29,6 +29,7 @@ function escapeHtml(value) {
 }
 
 function buildDailySummary(researchData, lookbackHours) {
+  if (researchData.daily_summary_zh) return researchData.daily_summary_zh;
   if (researchData.daily_summary) return researchData.daily_summary;
 
   const aiItems = researchData.ai_technology || researchData.silicon_valley || [];
@@ -40,6 +41,7 @@ function buildDailySummary(researchData, lookbackHours) {
 }
 
 function buildOpeningLine(researchData) {
+  if (researchData.opening_line_zh) return researchData.opening_line_zh;
   if (researchData.opening_line) return researchData.opening_line;
 
   const aiItems = researchData.ai_technology || researchData.silicon_valley || [];
@@ -83,11 +85,15 @@ function getEmailContext(researchData, options = {}) {
 }
 
 function formatTextItem(item, index, label) {
+  const topic = item.topic_zh || item.topic;
+  const summary = item.summary_zh || item.summary;
+  const impact = item.impact_zh || item.impact || '需继续观察其对产品策略、资本配置和企业采用节奏的影响。';
+
   return [
-    `${index + 1}. ${item.topic}`,
+    `${index + 1}. ${topic}`,
     `   ${label}${item.amount ? ` / 规模：${formatAmount(item.amount)}` : ''}`,
-    `   要点：${item.summary}`,
-    `   影响：${item.impact || '需继续观察其对产品策略、资本配置和企业采用节奏的影响。'}`,
+    `   要点：${summary}`,
+    `   影响：${impact}`,
     `   来源时间：${formatSourceTime(item.source_published_at)}`,
     `   来源：${item.source || '未提供'}`
   ].join('\n');
@@ -141,6 +147,9 @@ AI Daily Report 编辑部`;
 }
 
 function itemCard(item, index, label, accentColor, bgColor) {
+  const topic = item.topic_zh || item.topic;
+  const summary = item.summary_zh || item.summary;
+  const impact = item.impact_zh || item.impact || '需继续观察其对产品策略、资本配置和企业采用节奏的影响。';
   const source = item.source || '';
   const sourceHtml = source
     ? `<a href="${escapeHtml(source)}" style="color:#2563eb;text-decoration:none;">查看来源</a>`
@@ -157,12 +166,12 @@ function itemCard(item, index, label, accentColor, bgColor) {
                 <span style="color:#9ca3af;font-size:12px;margin-left:8px;">#${index + 1}</span>
                 ${item.amount ? `<span style="display:inline-block;margin-left:8px;color:#374151;font-size:12px;">规模：${escapeHtml(formatAmount(item.amount))}</span>` : ''}
               </div>
-              <div style="font-size:17px;line-height:1.45;font-weight:700;color:#111827;margin-bottom:8px;">${escapeHtml(item.topic)}</div>
-              <div style="font-size:14px;line-height:1.7;color:#374151;margin-bottom:10px;">${escapeHtml(item.summary)}</div>
+              <div style="font-size:17px;line-height:1.45;font-weight:700;color:#111827;margin-bottom:8px;">${escapeHtml(topic)}</div>
+              <div style="font-size:14px;line-height:1.7;color:#374151;margin-bottom:10px;">${escapeHtml(summary)}</div>
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f9fafb;border-radius:10px;">
                 <tr>
                   <td style="padding:10px 12px;font-size:13px;line-height:1.65;color:#4b5563;">
-                    <strong style="color:#111827;">影响：</strong>${escapeHtml(item.impact || '需继续观察其对产品策略、资本配置和企业采用节奏的影响。')}
+                    <strong style="color:#111827;">影响：</strong>${escapeHtml(impact)}
                   </td>
                 </tr>
               </table>
