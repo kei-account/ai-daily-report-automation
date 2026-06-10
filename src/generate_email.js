@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 function formatAmount(amount) {
-  return amount ? `\n   规模：${amount}` : '';
+  return amount ? amount : '未披露';
 }
 
 function formatSourceTime(value) {
@@ -19,12 +19,28 @@ function formatSourceTime(value) {
   }) + ' JST';
 }
 
-function formatSectionItem(item, index) {
-  return `${index + 1}. ${item.topic}${formatAmount(item.amount)}
-   要点：${item.summary}
-   影响：${item.impact || '需继续观察其对产品策略、资本配置和企业采用节奏的影响。'}
-   来源时间：${formatSourceTime(item.source_published_at)}
-   来源：${item.source || '未提供'}`;
+function divider() {
+  return '────────────────────────────────';
+}
+
+function formatNotionItem(item, index, label) {
+  const rows = [
+    `#${index + 1}  ${item.topic}`,
+    `标签：${label}`,
+    item.amount ? `规模：${formatAmount(item.amount)}` : null,
+    '',
+    `要点`,
+    `${item.summary}`,
+    '',
+    `影响`,
+    `${item.impact || '需继续观察其对产品策略、资本配置和企业采用节奏的影响。'}`,
+    '',
+    `信息源`,
+    `时间：${formatSourceTime(item.source_published_at)}`,
+    `链接：${item.source || '未提供'}`
+  ].filter(row => row !== null);
+
+  return rows.join('\n');
 }
 
 function buildDailySummary(researchData, lookbackHours) {
@@ -69,11 +85,11 @@ function generateChineseEmail(researchData, options = {}) {
   });
 
   const aiTechnology = (researchData.ai_technology || researchData.silicon_valley || [])
-    .map(formatSectionItem)
+    .map((item, index) => formatNotionItem(item, index, 'AI 技术'))
     .join('\n\n');
 
   const peInvestment = (researchData.pe_investment || researchData.wall_street_pe || [])
-    .map(formatSectionItem)
+    .map((item, index) => formatNotionItem(item, index, 'PE / 投资'))
     .join('\n\n');
   const lookbackHours = researchData.lookback_hours || 24;
   const generatedAt = formatSourceTime(researchData.generated_at || now.toISOString());
@@ -84,18 +100,36 @@ function generateChineseEmail(researchData, options = {}) {
 
 ${openingLine}
 
-以下是 ${todayZh} 的 AI 日报。本期只整理过去 ${lookbackHours} 小时内发布或更新的信息源，并在每条新闻下标注来源时间。生成时间：${generatedAt}。
+AI Daily Report
+${todayZh}
 
-一、今日核心摘要
+${divider()}
+
+页面属性
+收件人：${recipientName}
+时间范围：过去 ${lookbackHours} 小时
+生成时间：${generatedAt}
+报告视角：AI 技术 / PE 投资
+附件：完整 Word 日报
+
+${divider()}
+
+今日的信息总结
 ${dailySummary}
 
-二、AI 技术角度
+${divider()}
+
+AI 技术
 ${aiTechnology || '过去 24 小时内暂无足够可靠的新信息。'}
 
-三、PE / 投资角度
+${divider()}
+
+PE / 投资
 ${peInvestment || '过去 24 小时内暂无足够可靠的新信息。'}
 
-四、综合判断
+${divider()}
+
+综合判断
 基于过去 ${lookbackHours} 小时的信息，AI 技术侧的重点仍在可部署能力、Agent 工作流、算力/平台基础设施和合规治理；PE/投资侧则更关注这些技术能否转化为收入、效率、估值支撑和企业级部署机会。短期内，真正值得跟踪的不是“AI 是否热门”，而是哪些新消息能证明技术正在变成可购买、可扩张、可计价的商业能力。
 
 以上供参考。
