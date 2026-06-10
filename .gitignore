@@ -3,5 +3,6 @@ node_modules/
 .env
 outputs/
 email_body.txt
+email_body.html
 research_data.json
 *.log

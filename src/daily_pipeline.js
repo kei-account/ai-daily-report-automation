@@ -3,7 +3,7 @@ const path = require('path');
 const { fetchNews } = require('./fetch_news');
 const { buildResearchData } = require('./llm_research');
 const { generateReport } = require('./create_report');
-const { generateChineseEmail } = require('./generate_email');
+const { generateChineseEmail, generateChineseEmailHtml } = require('./generate_email');
 const { sendEmail } = require('./send_email');
 
 async function main() {
@@ -26,8 +26,14 @@ async function main() {
   fs.writeFileSync(emailPath, emailBody);
   console.log(`Generated email body: ${emailPath}`);
 
+  const emailHtml = generateChineseEmailHtml(researchData, { date });
+  const emailHtmlPath = path.join(process.cwd(), 'email_body.html');
+  fs.writeFileSync(emailHtmlPath, emailHtml);
+  console.log(`Generated email HTML: ${emailHtmlPath}`);
+
   const info = await sendEmail({
     body: emailBody,
+    html: emailHtml,
     attachmentPath: docPath,
     date
   });

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { generateReport } = require('./create_report');
-const { generateChineseEmail } = require('./generate_email');
+const { generateChineseEmail, generateChineseEmailHtml } = require('./generate_email');
 
 function resolveInputPath() {
   if (process.argv.includes('--example')) {
@@ -28,6 +28,13 @@ async function main() {
   const emailPath = path.join(process.cwd(), 'email_body.txt');
   fs.writeFileSync(emailPath, emailBody);
   console.log(`Email body: ${emailPath}`);
+
+  const emailHtml = generateChineseEmailHtml(researchData, {
+    date: researchData.date
+  });
+  const emailHtmlPath = path.join(process.cwd(), 'email_body.html');
+  fs.writeFileSync(emailHtmlPath, emailHtml);
+  console.log(`Email HTML: ${emailHtmlPath}`);
 
   console.log('Done.');
 }

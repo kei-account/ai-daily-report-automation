@@ -14,7 +14,7 @@ function formatSubject(date = new Date()) {
   return `【AI日报】硅谷与华尔街AI动态速报 — ${month}月${day}日`;
 }
 
-async function sendEmail({ body, attachmentPath, date }) {
+async function sendEmail({ body, html, attachmentPath, date }) {
   const user = requireEnv('GMAIL_USER');
   const pass = requireEnv('GMAIL_APP_PASSWORD');
   const to = requireEnv('REPORT_RECIPIENT');
@@ -30,6 +30,10 @@ async function sendEmail({ body, attachmentPath, date }) {
     subject: formatSubject(date ? new Date(date) : new Date()),
     text: body
   };
+
+  if (html) {
+    message.html = html;
+  }
 
   if (attachmentPath) {
     message.attachments = [{ path: attachmentPath }];

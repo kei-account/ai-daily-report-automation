@@ -60,5 +60,6 @@ jobs:
           path: |
             outputs/*.docx
             email_body.txt
+            email_body.html
             research_data.json
           if-no-files-found: ignore
