@@ -110,4 +110,9 @@ if (require.main === module) {
   console.log('Email body saved: email_body.txt');
 }
 
-module.exports = { generateChineseEmail };
+module.exports = {
+  buildDailySummary,
+  buildOpeningLine,
+  formatSourceTime,
+  generateChineseEmail
+};

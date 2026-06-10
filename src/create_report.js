@@ -13,6 +13,7 @@ const {
 } = require('docx');
 const fs = require('fs');
 const path = require('path');
+const { buildDailySummary, buildOpeningLine } = require('./generate_email');
 
 function getDateString(date = new Date()) {
   return date.toISOString().slice(0, 10);
@@ -71,6 +72,16 @@ function bullet(text) {
   });
 }
 
+function labeledParagraph(label, text) {
+  return new Paragraph({
+    spacing: { before: 0, after: 120, line: 280 },
+    children: [
+      textRun(`${label}: `, { size: 21, bold: true, color: '1F4D78' }),
+      textRun(text || 'Not provided', { size: 21, color: '111111' })
+    ]
+  });
+}
+
 function formatSourceTime(value) {
   if (!value) return 'Not provided';
   const date = new Date(value);
@@ -101,11 +112,24 @@ function sourceLine(item) {
   });
 }
 
+function itemBlocks(item) {
+  return [
+    heading2(item.topic),
+    labeledParagraph('Key point', item.summary),
+    labeledParagraph('Impact', item.impact || 'Needs continued monitoring for business and investment implications.'),
+    ...(item.amount ? [bullet(`Deal size: ${item.amount}`)] : []),
+    sourceLine(item)
+  ];
+}
+
 async function generateReport(researchData, options = {}) {
   const now = options.date ? new Date(options.date) : new Date();
   const dateStr = getDateString(now);
   const displayDate = getDisplayDate(now);
   const outputDir = options.outputDir || process.env.OUTPUT_DIR || path.join(process.cwd(), 'outputs');
+  const lookbackHours = researchData.lookback_hours || 24;
+  const openingLine = buildOpeningLine(researchData);
+  const dailySummary = buildDailySummary(researchData, lookbackHours);
   fs.mkdirSync(outputDir, { recursive: true });
 
   const doc = new Document({
@@ -154,21 +178,22 @@ async function generateReport(researchData, options = {}) {
           spacing: { before: 0, after: 360 },
           children: [textRun(displayDate, { size: 24, color: '555555' })]
         }),
-        body(`Daily intelligence brief based on sources published within the last ${researchData.lookback_hours || 24} hours.`),
+        body(`Daily intelligence brief based on sources published or updated within the last ${lookbackHours} hours.`),
+        heading1('Opening Summary'),
+        body(openingLine),
+        heading1('Today at a Glance'),
+        body(dailySummary),
         heading1('PART 1 | AI Technology'),
         ...(researchData.ai_technology || researchData.silicon_valley || []).flatMap(item => [
-          heading2(item.topic),
-          body(item.summary),
-          sourceLine(item)
+          ...itemBlocks(item)
         ]),
         new Paragraph({ children: [new PageBreak()] }),
         heading1('PART 2 | PE and Investment'),
         ...(researchData.pe_investment || researchData.wall_street_pe || []).flatMap(item => [
-          heading2(item.topic),
-          body(item.summary),
-          ...(item.amount ? [bullet(`Deal size: ${item.amount}`)] : []),
-          sourceLine(item)
+          ...itemBlocks(item)
         ]),
+        heading1('Integrated View'),
+        body(`Based on the last ${lookbackHours} hours of signals, the technology side should be read through deployability, agent workflows, infrastructure, and governance. The PE/investment side should be read through revenue conversion, efficiency gains, valuation support, and enterprise deployment opportunities.`),
         new Paragraph({
           alignment: AlignmentType.CENTER,
           spacing: { before: 360 },
