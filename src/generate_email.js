@@ -47,15 +47,15 @@ function buildOpeningLine(researchData) {
   const investmentLead = investmentItems[0]?.topic;
 
   if (aiLead && investmentLead) {
-    return `今天的 AI 新闻像一场双线直播：技术侧盯着「${aiLead}」，资本侧盯着「${investmentLead}」，热闹但值得挑重点看。`;
+    return `今天的 AI 新闻像一场双线直播：技术侧盯着「${aiLead}」，资本侧盯着「${investmentLead}」。热闹归热闹，但重点不是谁喊得最大声，而是谁能把模型、产品和钱真正串起来。今天这份日报，就按“技术有没有落地、资本有没有买账”两条线来看。`;
   }
   if (aiLead) {
-    return `今天 AI 技术侧的镜头比较集中：「${aiLead}」成了最值得先看的那条线。`;
+    return `今天 AI 技术侧的镜头比较集中：「${aiLead}」成了最值得先看的那条线。资本侧虽然没有同样强的单点信号，但这不代表安静，更多像是在等技术交一份更硬的成绩单。今天先看技术怎么往前走，再看市场会不会跟上。`;
   }
   if (investmentLead) {
-    return `今天资本侧先举手：「${investmentLead}」提醒我们，AI 故事最后还是要落到钱和效率上。`;
+    return `今天资本侧先举手：「${investmentLead}」提醒我们，AI 故事最后还是要落到钱和效率上。技术侧如果没有足够强的新信号，投资人就会更盯收入、部署和回报。今天的重点，是资本到底在为什么样的 AI 买单。`;
   }
-  return '今天的 AI 新闻不算喧哗，但仍值得从技术和资本两条线快速扫一遍。';
+  return '今天的 AI 新闻不算喧哗，但安静不等于没变化。技术侧看有没有新能力进入真实场景，资本侧看有没有新资金继续下注。今天适合少看口号，多看落地和回报。';
 }
 
 function generateChineseEmail(researchData, options = {}) {

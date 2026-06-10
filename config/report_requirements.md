@@ -7,8 +7,8 @@ Language: Simplified Chinese.
 Tone:
 - Professional and concise.
 - Suitable for an executive or investor.
-- Start with one short internet-style comment before the formal report.
-- The opening should be based on today's actual news, lively and concise, with light wit.
+- Start with a 2-3 sentence internet-style comment before the formal report.
+- The opening should be based on today's actual news, lively, concise, information-dense, with light wit.
 - Avoid generic repeated lines, clickbait, memes, childish jokes, or exaggerated sarcasm.
 
 Core sections:
