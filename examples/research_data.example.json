@@ -16,6 +16,21 @@
       "summary": "AI product strategy is shifting from chatbots toward systems that can use tools, plan tasks, and execute multi-step workflows.",
       "summary_en": "AI product strategy is shifting from chatbots toward systems that can use tools, plan tasks, and execute multi-step workflows.",
       "summary_zh": "AI 产品策略正在从聊天机器人转向能够调用工具、规划任务并执行多步骤工作流的系统。",
+      "key_facts": [
+        "The selected item focuses on agentic AI as a product strategy topic.",
+        "The concrete product shift is from chatbot interfaces toward tool-using, multi-step workflow systems."
+      ],
+      "key_facts_en": [
+        "The selected item focuses on agentic AI as a product strategy topic.",
+        "The concrete product shift is from chatbot interfaces toward tool-using, multi-step workflow systems."
+      ],
+      "key_facts_zh": [
+        "这条新闻的具体对象是 Agentic AI 作为产品战略焦点，而不是泛泛讨论 AI 热度。",
+        "具体变化是：AI 产品从聊天界面，转向能调用工具、规划任务、执行多步骤流程的系统。"
+      ],
+      "framework": "Product analysis: user workflow, capability improvement, distribution, defensibility, adoption friction.",
+      "framework_en": "Product analysis: user workflow, capability improvement, distribution, defensibility, adoption friction.",
+      "framework_zh": "产品分析框架：用户工作流、能力增量、分发入口、壁垒、采用阻力。",
       "impact": "Agent capabilities may reshape enterprise workflows, developer tooling, and platform strategy.",
       "impact_en": "Agent capabilities may reshape enterprise workflows, developer tooling, and platform strategy.",
       "impact_zh": "Agent 能力可能重塑企业工作流、开发者工具和平台战略。",
@@ -35,6 +50,21 @@
       "summary": "AI governance is moving from broad policy discussion into concrete compliance work for product, legal, and enterprise sales teams.",
       "summary_en": "AI governance is moving from broad policy discussion into concrete compliance work for product, legal, and enterprise sales teams.",
       "summary_zh": "AI 治理正在从宏观政策讨论进入产品、法务和企业销售团队的具体合规工作。",
+      "key_facts": [
+        "The item is about AI safety and transparency rules becoming operational.",
+        "The affected functions include product, legal, and enterprise sales teams."
+      ],
+      "key_facts_en": [
+        "The item is about AI safety and transparency rules becoming operational.",
+        "The affected functions include product, legal, and enterprise sales teams."
+      ],
+      "key_facts_zh": [
+        "这条新闻的具体信息是：AI 安全与透明度规则正在进入执行阶段。",
+        "受影响的不是单一技术团队，而是产品、法务和企业销售团队的协同流程。"
+      ],
+      "framework": "Governance framework: transparency, auditability, risk controls, procurement readiness.",
+      "framework_en": "Governance framework: transparency, auditability, risk controls, procurement readiness.",
+      "framework_zh": "监管/治理框架：透明度、可审计性、风险控制、企业采购可用性。",
       "impact": "Compliance maturity may become a stronger enterprise purchasing requirement.",
       "impact_en": "Compliance maturity may become a stronger enterprise purchasing requirement.",
       "impact_zh": "合规成熟度可能成为企业采购 AI 产品时更重要的门槛。",
@@ -57,6 +87,21 @@
       "summary": "Large AI investments remain focused on frontier models, deployment services, compute, and enterprise infrastructure.",
       "summary_en": "Large AI investments remain focused on frontier models, deployment services, compute, and enterprise infrastructure.",
       "summary_zh": "大额 AI 投资仍集中在前沿模型、部署服务、算力和企业级基础设施。",
+      "key_facts": [
+        "The item references $1B+ in AI infrastructure-related private capital activity.",
+        "The capital focus includes frontier models, deployment services, compute, and enterprise infrastructure."
+      ],
+      "key_facts_en": [
+        "The item references $1B+ in AI infrastructure-related private capital activity.",
+        "The capital focus includes frontier models, deployment services, compute, and enterprise infrastructure."
+      ],
+      "key_facts_zh": [
+        "这条新闻保留的具体信号是：AI 基础设施相关私募资本活动规模达到 $1B+。",
+        "资金重点不是单一应用，而是前沿模型、部署服务、算力和企业级基础设施。"
+      ],
+      "framework": "PE analysis: market size, utilization, customer concentration, pricing power, capex intensity.",
+      "framework_en": "PE analysis: market size, utilization, customer concentration, pricing power, capex intensity.",
+      "framework_zh": "投行/PE 分析框架：市场空间、利用率、客户集中度、定价权、资本开支强度。",
       "impact": "PE and growth investors may continue to treat AI infrastructure as a strategic asset class.",
       "impact_en": "PE and growth investors may continue to treat AI infrastructure as a strategic asset class.",
       "impact_zh": "PE 和成长型投资人可能继续把 AI 基础设施视为战略资产类别。",
@@ -77,6 +122,21 @@
       "summary": "Public-market enthusiasm remains strong, but investors are paying closer attention to revenue quality, margins, and capital expenditure returns.",
       "summary_en": "Public-market enthusiasm remains strong, but investors are paying closer attention to revenue quality, margins, and capital expenditure returns.",
       "summary_zh": "公开市场热情仍然较强，但投资人正在更关注收入质量、利润率和资本开支回报。",
+      "key_facts": [
+        "The item focuses on AI stock outlook rather than a single private deal.",
+        "The specific market signals are revenue quality, margins, and capex returns."
+      ],
+      "key_facts_en": [
+        "The item focuses on AI stock outlook rather than a single private deal.",
+        "The specific market signals are revenue quality, margins, and capex returns."
+      ],
+      "key_facts_zh": [
+        "这条新闻讨论的是 AI 股票前景，而不是单笔私募交易。",
+        "市场正在看的具体指标包括收入质量、利润率和资本开支回报。"
+      ],
+      "framework": "Capital markets framework: revenue quality, margin path, capex ROI, valuation multiple support.",
+      "framework_en": "Capital markets framework: revenue quality, margin path, capex ROI, valuation multiple support.",
+      "framework_zh": "资本市场定价框架：收入质量、利润率路径、资本开支 ROI、估值倍数支撑。",
       "impact": "AI-linked equities may be judged more by execution quality than by narrative alone.",
       "impact_en": "AI-linked equities may be judged more by execution quality than by narrative alone.",
       "impact_zh": "AI 相关股票可能越来越多地按执行质量定价，而不是只看叙事热度。",
@@ -89,5 +149,11 @@
       "source_published_at": "2026-06-02T23:40:00.000Z",
       "source": "https://example.com/wall-street-ai"
     }
-  ]
+  ],
+  "framework_analysis": "Today should be read through a two-axis framework: product deployability on the technology side and economic proof on the capital side.",
+  "framework_analysis_en": "Today should be read through a two-axis framework: product deployability on the technology side and economic proof on the capital side.",
+  "framework_analysis_zh": "今天的信息可以放进一个二维框架里看：技术侧看“产品可部署性”，资本侧看“经济结果可证明性”。Agent 产品化、AI 治理、基础设施投资和公开市场定价其实指向同一件事：AI 正在从能力展示，转向能否稳定进入业务流程并产生可衡量回报。",
+  "forward_summary": "The next phase of AI competition may reward companies that own concrete workflows, reliable deployment infrastructure, and measurable ROI.",
+  "forward_summary_en": "The next phase of AI competition may reward companies that own concrete workflows, reliable deployment infrastructure, and measurable ROI.",
+  "forward_summary_zh": "前瞻来看，下一阶段 AI 的核心分化不会只发生在模型能力上，而会发生在“谁拥有具体工作流、谁能降低部署摩擦、谁能证明 ROI”。产品公司要证明场景闭环，基础设施公司要证明利用率和现金流，资本市场则会越来越按执行质量给 AI 定价。"
 }

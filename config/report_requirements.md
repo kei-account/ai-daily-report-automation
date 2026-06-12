@@ -27,7 +27,8 @@ Core sections:
 
 Each news item should include:
 - 主题
-- 要点
+- 具体信息
+- 事件要点
 - 专业解读
 - 前瞻观察
 - 对 AI 发展的意义
@@ -35,11 +36,14 @@ Each news item should include:
 - 来源
 
 Analysis depth:
-- Each selected item should explain why the news matters, not only what happened.
-- For AI technology items, analyze implications for model capability, agent workflows, infrastructure, developer ecosystem, enterprise adoption, safety, or regulation.
-- For PE/investment items, analyze implications for valuation logic, capital allocation, commercialization quality, enterprise AI deployment, and competitive moats.
-- Keep each item compact but substantive: 2-4 dense sentences across 要点 / 专业解读 / 前瞻观察.
+- Each selected item must preserve concrete facts from the source item: company/product/person/deal name, disclosed amount, product feature, market signal, regulatory action, customer/deployment detail, or other specific information when present.
+- Do not replace concrete facts with only abstract interpretation. Start from the concrete case, then analyze it.
+- For AI technology/product items, use a product analysis lens when applicable: target user or workflow, capability improvement, distribution/channel, defensibility, adoption friction, and risk.
+- For model/infrastructure items, use a technology stack lens when applicable: model capability, compute/data dependency, developer ecosystem, reliability, cost curve, and deployment bottleneck.
+- For PE/investment items, use an investment banking / PE lens when applicable: market size, growth quality, revenue model, unit economics, margin profile, customer concentration, competitive moat, valuation driver, exit path, and downside risk.
+- Keep each item substantive: preserve 2-4 concrete facts or signals where available, then add 2-4 dense sentences of professional analysis and forward-looking implications.
 - Avoid empty phrases such as "值得关注", "影响深远", or "需要持续观察" unless followed by concrete reasoning.
+- At the end, add a stage-level framework analysis and forward-looking summary that connects today's items into a bigger map of AI development.
 
 Freshness requirement:
 - Only use news published or updated within the last 24 hours.

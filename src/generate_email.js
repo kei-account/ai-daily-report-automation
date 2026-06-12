@@ -79,27 +79,43 @@ function getEmailContext(researchData, options = {}) {
     generatedAt: formatSourceTime(researchData.generated_at || now.toISOString()),
     dailySummary: buildDailySummary(researchData, lookbackHours),
     openingLine: buildOpeningLine(researchData),
+    frameworkAnalysis: researchData.framework_analysis_zh || researchData.framework_analysis || `基于过去 ${lookbackHours} 小时的信息，AI 技术侧的重点仍在可部署能力、Agent 工作流、算力/平台基础设施和合规治理；PE/投资侧则更关注这些技术能否转化为收入、效率、估值支撑和企业级部署机会。`,
+    forwardSummary: researchData.forward_summary_zh || researchData.forward_summary || '接下来更值得跟踪的不是 AI 是否继续热门，而是哪类公司能把具体场景、技术能力和商业结果稳定连接起来。',
     aiItems: researchData.ai_technology || researchData.silicon_valley || [],
     investmentItems: researchData.pe_investment || researchData.wall_street_pe || []
   };
+}
+
+function normalizeList(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value.filter(Boolean);
+  return [value].filter(Boolean);
 }
 
 function formatTextItem(item, index, label) {
   const topic = item.topic_zh || item.topic;
   const summary = item.summary_zh || item.summary;
   const impact = item.impact_zh || item.impact || '需继续观察其对产品策略、资本配置和企业采用节奏的影响。';
+  const keyFacts = normalizeList(item.key_facts_zh || item.key_facts);
+  const framework = item.framework_zh || item.framework || '';
   const analysis = item.analysis_zh || item.analysis || '';
   const forwardView = item.forward_view_zh || item.forward_view || '';
+  const factLines = keyFacts.length
+    ? keyFacts.map(fact => `   - ${fact}`).join('\n')
+    : `   - ${summary}`;
 
   return [
     `${index + 1}. ${topic}`,
     `   ${label}${item.amount ? ` / 规模：${formatAmount(item.amount)}` : ''}`,
+    `   具体信息：`,
+    factLines,
     `   事件要点：${summary}`,
+    framework ? `   分析框架：${framework}` : null,
     `   专业解读：${analysis || impact}`,
     `   前瞻观察：${forwardView || impact}`,
     `   来源时间：${formatSourceTime(item.source_published_at)}`,
     `   来源：${item.source || '未提供'}`
-  ].join('\n');
+  ].filter(Boolean).join('\n');
 }
 
 function generateChineseEmail(researchData, options = {}) {
@@ -110,6 +126,8 @@ function generateChineseEmail(researchData, options = {}) {
     generatedAt,
     dailySummary,
     openingLine,
+    frameworkAnalysis,
+    forwardSummary,
     aiItems,
     investmentItems
   } = getEmailContext(researchData, options);
@@ -138,7 +156,10 @@ PE / 投资
 ${peInvestment || '过去 24 小时内暂无足够可靠的新信息。'}
 
 综合判断
-基于过去 ${lookbackHours} 小时的信息，AI 技术侧的重点仍在可部署能力、Agent 工作流、算力/平台基础设施和合规治理；PE/投资侧则更关注这些技术能否转化为收入、效率、估值支撑和企业级部署机会。
+${frameworkAnalysis}
+
+前瞻总结
+${forwardSummary}
 
 时间范围：过去 ${lookbackHours} 小时
 生成时间：${generatedAt}
@@ -153,12 +174,20 @@ function itemCard(item, index, label, accentColor, bgColor) {
   const topic = item.topic_zh || item.topic;
   const summary = item.summary_zh || item.summary;
   const impact = item.impact_zh || item.impact || '需继续观察其对产品策略、资本配置和企业采用节奏的影响。';
+  const keyFacts = normalizeList(item.key_facts_zh || item.key_facts);
+  const framework = item.framework_zh || item.framework || '';
   const analysis = item.analysis_zh || item.analysis || impact;
   const forwardView = item.forward_view_zh || item.forward_view || impact;
   const source = item.source || '';
   const sourceHtml = source
     ? `<a href="${escapeHtml(source)}" style="color:#2563eb;text-decoration:none;">查看来源</a>`
     : '未提供';
+  const factItems = (keyFacts.length ? keyFacts : [summary])
+    .map(fact => `<li style="margin:0 0 5px 0;">${escapeHtml(fact)}</li>`)
+    .join('');
+  const frameworkHtml = framework
+    ? `<div style="font-size:12px;line-height:1.6;color:#6b7280;margin:0 0 10px 0;"><strong style="color:#374151;">分析框架：</strong>${escapeHtml(framework)}</div>`
+    : '';
 
   return `
     <tr>
@@ -172,7 +201,16 @@ function itemCard(item, index, label, accentColor, bgColor) {
                 ${item.amount ? `<span style="display:inline-block;margin-left:8px;color:#374151;font-size:12px;">规模：${escapeHtml(formatAmount(item.amount))}</span>` : ''}
               </div>
               <div style="font-size:17px;line-height:1.45;font-weight:700;color:#111827;margin-bottom:8px;">${escapeHtml(topic)}</div>
-              <div style="font-size:14px;line-height:1.7;color:#374151;margin-bottom:12px;">${escapeHtml(summary)}</div>
+              <div style="font-size:14px;line-height:1.7;color:#374151;margin-bottom:10px;">${escapeHtml(summary)}</div>
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f8fafc;border-radius:10px;margin-bottom:10px;">
+                <tr>
+                  <td style="padding:11px 14px;font-size:13px;line-height:1.65;color:#334155;">
+                    <div style="font-weight:800;color:#0f172a;margin-bottom:5px;">具体信息</div>
+                    <ul style="padding-left:18px;margin:0;">${factItems}</ul>
+                  </td>
+                </tr>
+              </table>
+              ${frameworkHtml}
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f9fafb;border-radius:10px;">
                 <tr>
                   <td style="padding:12px 14px;font-size:13px;line-height:1.7;color:#4b5563;">
@@ -222,6 +260,8 @@ function generateChineseEmailHtml(researchData, options = {}) {
     generatedAt,
     dailySummary,
     openingLine,
+    frameworkAnalysis,
+    forwardSummary,
     aiItems,
     investmentItems
   } = getEmailContext(researchData, options);
@@ -267,8 +307,11 @@ function generateChineseEmailHtml(researchData, options = {}) {
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-top:18px;background:#111827;border-radius:16px;">
                   <tr>
                     <td style="padding:18px 20px;">
-                      <div style="font-size:14px;font-weight:800;color:#ffffff;margin-bottom:8px;">综合判断</div>
-                      <div style="font-size:14px;line-height:1.8;color:#e5e7eb;">基于过去 ${lookbackHours} 小时的信息，AI 技术侧的重点仍在可部署能力、Agent 工作流、算力/平台基础设施和合规治理；PE/投资侧则更关注这些技术能否转化为收入、效率、估值支撑和企业级部署机会。</div>
+                      <div style="font-size:14px;font-weight:800;color:#ffffff;margin-bottom:8px;">阶段性框架分析</div>
+                      <div style="font-size:14px;line-height:1.8;color:#e5e7eb;">${escapeHtml(frameworkAnalysis)}</div>
+                      <div style="height:1px;background:#374151;margin:14px 0;"></div>
+                      <div style="font-size:14px;font-weight:800;color:#ffffff;margin-bottom:8px;">前瞻总结</div>
+                      <div style="font-size:14px;line-height:1.8;color:#e5e7eb;">${escapeHtml(forwardSummary)}</div>
                     </td>
                   </tr>
                 </table>

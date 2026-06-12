@@ -22,6 +22,12 @@ function fallbackResearch(newsBundle) {
     summary: item.summary || item.title,
     summary_en: item.summary || item.title,
     summary_zh: item.summary || item.title,
+    key_facts: [item.title, item.summary || item.title].filter(Boolean).slice(0, 2),
+    key_facts_en: [item.title, item.summary || item.title].filter(Boolean).slice(0, 2),
+    key_facts_zh: [item.title, item.summary || item.title].filter(Boolean).slice(0, 2),
+    framework: 'Product analysis: user workflow, capability improvement, distribution, defensibility, and adoption friction.',
+    framework_en: 'Product analysis: user workflow, capability improvement, distribution, defensibility, and adoption friction.',
+    framework_zh: '产品分析框架：用户场景、能力增量、分发入口、壁垒与采用阻力。',
     impact: 'Needs continued monitoring for AI technology roadmaps, product platforms, and enterprise adoption.',
     impact_en: 'Needs continued monitoring for AI technology roadmaps, product platforms, and enterprise adoption.',
     impact_zh: '需继续观察其对 AI 技术路线、产品平台和企业采用节奏的影响。',
@@ -43,6 +49,12 @@ function fallbackResearch(newsBundle) {
     summary: item.summary || item.title,
     summary_en: item.summary || item.title,
     summary_zh: item.summary || item.title,
+    key_facts: [item.title, item.summary || item.title].filter(Boolean).slice(0, 2),
+    key_facts_en: [item.title, item.summary || item.title].filter(Boolean).slice(0, 2),
+    key_facts_zh: [item.title, item.summary || item.title].filter(Boolean).slice(0, 2),
+    framework: 'PE analysis: market size, growth quality, revenue model, margins, customer concentration, moat, and valuation driver.',
+    framework_en: 'PE analysis: market size, growth quality, revenue model, margins, customer concentration, moat, and valuation driver.',
+    framework_zh: '投行/PE 分析框架：市场空间、增长质量、收入模式、利润率、客户集中度、护城河与估值驱动。',
     impact: 'Needs continued monitoring for capital markets, PE investment, and enterprise AI deployment.',
     impact_en: 'Needs continued monitoring for capital markets, PE investment, and enterprise AI deployment.',
     impact_zh: '需继续观察其对资本市场、PE 投资和企业 AI 部署的影响。',
@@ -66,6 +78,12 @@ function fallbackResearch(newsBundle) {
     daily_summary: `Over the last ${newsBundle.lookback_hours || 24} hours, AI technology signals centered on "${firstTitle}", while investment signals should be read alongside "${secondTitle}".`,
     daily_summary_en: `Over the last ${newsBundle.lookback_hours || 24} hours, AI technology signals centered on "${firstTitle}", while investment signals should be read alongside "${secondTitle}".`,
     daily_summary_zh: `过去 ${newsBundle.lookback_hours || 24} 小时内，AI 技术侧主要围绕「${firstTitle}」展开；投资侧则需要结合「${secondTitle}」观察市场对 AI 商业化和资本回报的判断。`,
+    framework_analysis: 'Today should be read through the interaction between product deployability and capital discipline.',
+    framework_analysis_en: 'Today should be read through the interaction between product deployability and capital discipline.',
+    framework_analysis_zh: '今天的信息适合放在“产品可部署性 × 资本纪律”这个框架下看：技术侧要证明能力能进入真实流程，资本侧要确认这些能力能转化为收入质量、效率提升和估值支撑。',
+    forward_summary: 'The next phase of AI may reward companies that combine concrete workflow ownership with measurable economic outcomes.',
+    forward_summary_en: 'The next phase of AI may reward companies that combine concrete workflow ownership with measurable economic outcomes.',
+    forward_summary_zh: '阶段性看，AI 正在从“能力展示期”进入“结果证明期”。下一轮更有价值的公司，可能是既掌握具体工作流入口，又能把效率、收入或成本改善量化给客户和资本市场看的公司。',
     ai_technology: aiTechnology,
     pe_investment: peInvestment
   };
@@ -114,6 +132,12 @@ Return JSON only, with this exact shape:
       "summary": "English summary for backward compatibility",
       "summary_en": "English summary",
       "summary_zh": "Simplified Chinese summary",
+      "key_facts": ["English concrete fact or source signal"],
+      "key_facts_en": ["English concrete fact or source signal"],
+      "key_facts_zh": ["Simplified Chinese concrete fact or source signal"],
+      "framework": "English name of the professional analysis framework used",
+      "framework_en": "English name of the professional analysis framework used",
+      "framework_zh": "Simplified Chinese name of the professional analysis framework used",
       "impact": "English impact for backward compatibility",
       "impact_en": "English impact",
       "impact_zh": "Simplified Chinese impact",
@@ -136,6 +160,12 @@ Return JSON only, with this exact shape:
       "summary": "English summary for backward compatibility",
       "summary_en": "English summary",
       "summary_zh": "Simplified Chinese summary",
+      "key_facts": ["English concrete fact or source signal"],
+      "key_facts_en": ["English concrete fact or source signal"],
+      "key_facts_zh": ["Simplified Chinese concrete fact or source signal"],
+      "framework": "English name of the professional analysis framework used",
+      "framework_en": "English name of the professional analysis framework used",
+      "framework_zh": "Simplified Chinese name of the professional analysis framework used",
       "impact": "English impact for backward compatibility",
       "impact_en": "English impact",
       "impact_zh": "Simplified Chinese impact",
@@ -148,18 +178,28 @@ Return JSON only, with this exact shape:
       "source": "...",
       "source_published_at": "ISO-8601 timestamp"
     }
-  ]
+  ],
+  "framework_analysis": "English stage-level framework analysis for backward compatibility",
+  "framework_analysis_en": "English stage-level framework analysis",
+  "framework_analysis_zh": "Simplified Chinese stage-level framework analysis that connects today's concrete cases",
+  "forward_summary": "English forward-looking synthesis for backward compatibility",
+  "forward_summary_en": "English forward-looking synthesis",
+  "forward_summary_zh": "Simplified Chinese forward-looking synthesis"
 }
 
 Rules:
 - Use English for opening_line, opening_line_en, daily_summary, daily_summary_en, topic, topic_en, summary, summary_en, impact, and impact_en.
-- Use English for analysis, analysis_en, forward_view, and forward_view_en.
-- Use Simplified Chinese for opening_line_zh, daily_summary_zh, topic_zh, summary_zh, impact_zh, analysis_zh, and forward_view_zh.
+- Use English for key_facts, key_facts_en, framework, framework_en, analysis, analysis_en, forward_view, forward_view_en, framework_analysis, framework_analysis_en, forward_summary, and forward_summary_en.
+- Use Simplified Chinese for opening_line_zh, daily_summary_zh, topic_zh, summary_zh, key_facts_zh, framework_zh, impact_zh, analysis_zh, forward_view_zh, framework_analysis_zh, and forward_summary_zh.
 - opening_line_zh must be based on today's selected news, written as 2-3 concise internet-style sentences: lively, specific, slightly witty, and information-dense, but not clickbait and not childish. It must not reuse generic templates such as "技术在赶路，资本在看路牌".
 - daily_summary_zh and daily_summary_en must summarize today's actual information signals, not explain the report rules. They should mention both AI technology and PE/investment angles when data is available, and must be specific to today's selected items.
+- key_facts_zh must preserve concrete facts from the provided source item. Include company/product/deal names, disclosed numbers, product features, customer/deployment details, policy actions, market signals, or other specific information if present. If the source lacks numbers, do not invent them; preserve the concrete non-numeric signal instead.
+- framework_zh must name the analysis lens being applied, such as 产品分析框架, 技术栈分析框架, 平台生态分析框架, 监管/治理框架, 投行/PE 分析框架, or 资本市场定价框架.
 - analysis_zh must explain the professional significance of the item. For AI technology, write from the perspective of AI product/platform/infrastructure development. For PE/investment, write from the perspective of valuation, deployment, market structure, and capital allocation.
 - forward_view_zh must explain the forward-looking meaning for AI development in 1-2 concrete sentences. Avoid empty conclusions; connect the item to capability trajectory, adoption curve, regulation, infrastructure demand, competition, or investment logic.
 - summary_zh should state what happened; analysis_zh should explain why it matters; forward_view_zh should explain what it may imply next.
+- framework_analysis_zh must synthesize today's concrete cases into a stage-level framework, not repeat item summaries.
+- forward_summary_zh must provide a concise forward-looking conclusion about the current phase of AI development and investment, grounded in today's selected items.
 - Select up to 3 items for ai_technology and up to 3 items for pe_investment when possible.
 - Preserve source URLs and source_published_at timestamps from the input.
 - Do not invent facts, deal amounts, or source URLs.
