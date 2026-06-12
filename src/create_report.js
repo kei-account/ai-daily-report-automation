@@ -111,6 +111,24 @@ function sourceLine(item) {
   });
 }
 
+function firstText(...values) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return '';
+}
+
+function deriveEntityName(item) {
+  const topic = firstText(item.topic_en, item.topic, item.summary_en, item.summary);
+  const match = topic.match(/^([^:：|｜\-—–]+?)(?:[:：|｜\-—–]|\s)/);
+  return (match?.[1] || topic || 'Unknown subject').trim();
+}
+
+function entityField(item, enKey, fallback = 'Not disclosed by the provided source; requires further verification.') {
+  const value = firstText(item[enKey], item[enKey.replace(/_en$/, '')]);
+  return value || fallback;
+}
+
 function itemBlocks(item) {
   const topic = item.topic_en || item.topic;
   const summary = item.summary_en || item.summary;
@@ -121,13 +139,21 @@ function itemBlocks(item) {
   const framework = item.framework_en || item.framework;
   const analysis = item.analysis_en || item.analysis;
   const forwardView = item.forward_view_en || item.forward_view;
+  const entityName = firstText(item.entity_name_en, item.entity_name) || deriveEntityName(item);
 
   return [
     heading2(topic),
-    labeledParagraph('Key point', summary),
+    labeledParagraph('Subject', entityName),
+    labeledParagraph('Action', entityField(item, 'action_en', summary || 'Not provided')),
+    labeledParagraph('Entity profile', entityField(item, 'entity_profile_en')),
+    labeledParagraph('Leadership background', entityField(item, 'leadership_background_en')),
+    labeledParagraph('Product / business model', entityField(item, 'product_or_business_en')),
+    labeledParagraph('Deal / product / policy details', entityField(item, 'deal_or_product_details_en')),
+    labeledParagraph('Source limitations', entityField(item, 'source_limitations_en')),
     ...(keyFacts.length ? [
       labeledParagraph('Concrete facts', keyFacts.join('; '))
     ] : []),
+    labeledParagraph('Key point', summary),
     ...(framework ? [labeledParagraph('Analysis framework', framework)] : []),
     labeledParagraph('Impact', impact),
     ...(analysis ? [labeledParagraph('Professional analysis', analysis)] : []),

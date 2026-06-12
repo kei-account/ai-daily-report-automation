@@ -1,5 +1,8 @@
 const fs = require('fs');
 
+const MISSING_EN = 'Not disclosed by the provided source; requires further verification.';
+const MISSING_ZH = '来源未披露，需进一步核验。';
+
 function extractJson(text) {
   const trimmed = text.trim();
   if (trimmed.startsWith('{')) return JSON.parse(trimmed);
@@ -11,61 +14,101 @@ function extractJson(text) {
   return JSON.parse(match[0]);
 }
 
+function inferEntityName(item) {
+  const title = item.title || '';
+  const match = title.match(/^([^:：|｜\-—–]+?)(?:[:：|｜\-—–]|\s+raises|\s+secures|\s+announces|\s+launches|\s+warns|\s+urges|\s+backs|\s+buys|\s+acquires)/i);
+  return (match?.[1] || title.split(/\s+/).slice(0, 4).join(' ') || 'Unknown subject').trim();
+}
+
+function enrichFallbackItem(item, category) {
+  const topic = item.title || 'Untitled AI news item';
+  const summary = item.summary || topic;
+  const entityName = inferEntityName(item);
+  const isInvestment = category === 'investment';
+  const frameworkEn = isInvestment
+    ? 'PE analysis: subject, action, deal signal, market structure, revenue model, moat, valuation driver, and downside risk.'
+    : 'AI technology analysis: subject, action, product or technical role, workflow impact, defensibility, adoption friction, and risk.';
+  const frameworkZh = isInvestment
+    ? '投行/PE 分析框架：主体、行动、交易信号、市场结构、收入模式、护城河、估值驱动与下行风险。'
+    : 'AI 技术/产品分析框架：主体、行动、产品或技术角色、工作流影响、壁垒、采用阻力与风险。';
+  const analysisEn = isInvestment
+    ? 'Read this as a concrete capital-allocation signal first, then as a broader indicator of where investors believe AI can produce measurable workflow efficiency, revenue quality, or valuation support.'
+    : 'Read this as a concrete company or product action first, then as a signal about whether AI capabilities are moving into repeatable product, platform, infrastructure, governance, or enterprise workflow patterns.';
+  const analysisZh = isInvestment
+    ? '这条信息应先作为具体资本配置动作来读：谁获得资金、谁参与、资金指向哪个工作流或市场。进一步看，它反映投资人正在寻找能够产生可量化效率、收入质量或估值支撑的 AI 场景。'
+    : '这条信息应先作为具体主体的具体行动来读：谁发布、调整、融资、合作或被监管影响。进一步看，它反映 AI 能力是否正在进入可重复的产品、平台、基础设施、治理或企业工作流。';
+
+  return {
+    topic,
+    topic_en: topic,
+    topic_zh: topic,
+    entity_name: entityName,
+    entity_name_en: entityName,
+    entity_name_zh: entityName,
+    entity_type: isInvestment ? 'Company or investment subject' : 'AI company, product, model, or policy actor',
+    entity_type_en: isInvestment ? 'Company or investment subject' : 'AI company, product, model, or policy actor',
+    entity_type_zh: isInvestment ? '公司或投资主体' : 'AI 公司、产品、模型或政策主体',
+    action: summary,
+    action_en: summary,
+    action_zh: summary,
+    entity_profile: MISSING_EN,
+    entity_profile_en: MISSING_EN,
+    entity_profile_zh: MISSING_ZH,
+    leadership_background: MISSING_EN,
+    leadership_background_en: MISSING_EN,
+    leadership_background_zh: MISSING_ZH,
+    product_or_business: MISSING_EN,
+    product_or_business_en: MISSING_EN,
+    product_or_business_zh: MISSING_ZH,
+    deal_or_product_details: summary,
+    deal_or_product_details_en: summary,
+    deal_or_product_details_zh: summary,
+    source_limitations: 'Fallback mode uses only the RSS title, summary, URL, and timestamp.',
+    source_limitations_en: 'Fallback mode uses only the RSS title, summary, URL, and timestamp.',
+    source_limitations_zh: '当前为备用模式，仅使用 RSS 标题、摘要、链接与时间戳；未披露信息不会补写。',
+    summary,
+    summary_en: summary,
+    summary_zh: summary,
+    key_facts: [topic, summary].filter(Boolean).slice(0, 2),
+    key_facts_en: [topic, summary].filter(Boolean).slice(0, 2),
+    key_facts_zh: [topic, summary].filter(Boolean).slice(0, 2),
+    framework: frameworkEn,
+    framework_en: frameworkEn,
+    framework_zh: frameworkZh,
+    impact: isInvestment
+      ? 'Needs monitoring for capital allocation, enterprise AI deployment, and valuation implications.'
+      : 'Needs monitoring for AI product strategy, platform direction, infrastructure demand, or governance implications.',
+    impact_en: isInvestment
+      ? 'Needs monitoring for capital allocation, enterprise AI deployment, and valuation implications.'
+      : 'Needs monitoring for AI product strategy, platform direction, infrastructure demand, or governance implications.',
+    impact_zh: isInvestment
+      ? '需继续观察其对资本配置、企业 AI 部署和估值逻辑的影响。'
+      : '需继续观察其对 AI 产品策略、平台方向、基础设施需求或治理逻辑的影响。',
+    analysis: analysisEn,
+    analysis_en: analysisEn,
+    analysis_zh: analysisZh,
+    forward_view: isInvestment
+      ? 'If similar signals continue, AI investment may concentrate around companies with concrete workflow ownership, proprietary data, and measurable ROI.'
+      : 'If similar signals continue, AI competition may shift further toward workflow ownership, reliability, governance, and deployment depth.',
+    forward_view_en: isInvestment
+      ? 'If similar signals continue, AI investment may concentrate around companies with concrete workflow ownership, proprietary data, and measurable ROI.'
+      : 'If similar signals continue, AI competition may shift further toward workflow ownership, reliability, governance, and deployment depth.',
+    forward_view_zh: isInvestment
+      ? '如果类似信号持续出现，AI 投资会更集中流向拥有具体工作流入口、专有数据和可衡量 ROI 的公司。资本会更挑剔，但也更愿意为确定性付溢价。'
+      : '如果类似信号持续出现，AI 竞争会进一步转向工作流入口、可靠性、治理能力和部署深度。单纯模型能力会越来越需要被具体场景验证。',
+    source: item.link,
+    source_published_at: item.published_at
+  };
+}
+
 function fallbackResearch(newsBundle) {
   const items = newsBundle.items || [];
   const firstTitle = items[0]?.title || 'AI 新闻不算少';
   const secondTitle = items[1]?.title || '资本市场也没闲着';
-  const aiTechnology = items.slice(0, 3).map(item => ({
-    topic: item.title,
-    topic_en: item.title,
-    topic_zh: item.title,
-    summary: item.summary || item.title,
-    summary_en: item.summary || item.title,
-    summary_zh: item.summary || item.title,
-    key_facts: [item.title, item.summary || item.title].filter(Boolean).slice(0, 2),
-    key_facts_en: [item.title, item.summary || item.title].filter(Boolean).slice(0, 2),
-    key_facts_zh: [item.title, item.summary || item.title].filter(Boolean).slice(0, 2),
-    framework: 'Product analysis: user workflow, capability improvement, distribution, defensibility, and adoption friction.',
-    framework_en: 'Product analysis: user workflow, capability improvement, distribution, defensibility, and adoption friction.',
-    framework_zh: '产品分析框架：用户场景、能力增量、分发入口、壁垒与采用阻力。',
-    impact: 'Needs continued monitoring for AI technology roadmaps, product platforms, and enterprise adoption.',
-    impact_en: 'Needs continued monitoring for AI technology roadmaps, product platforms, and enterprise adoption.',
-    impact_zh: '需继续观察其对 AI 技术路线、产品平台和企业采用节奏的影响。',
-    analysis: 'The item should be read as a signal about whether AI capabilities are moving from demos into repeatable product and workflow patterns.',
-    analysis_en: 'The item should be read as a signal about whether AI capabilities are moving from demos into repeatable product and workflow patterns.',
-    analysis_zh: '这条信息更适合作为 AI 能力从演示走向可复用产品和工作流的信号来看，而不是单纯看热度。关键在于它是否能改变开发者、企业用户或平台方的实际使用路径。',
-    forward_view: 'If similar signals continue, the next phase of AI competition may focus less on model access and more on integration quality, reliability, and workflow ownership.',
-    forward_view_en: 'If similar signals continue, the next phase of AI competition may focus less on model access and more on integration quality, reliability, and workflow ownership.',
-    forward_view_zh: '如果类似信号持续出现，AI 竞争会从“谁有模型”进一步转向“谁能稳定嵌入业务流程”。这会提升产品集成、可靠性和工作流入口的战略价值。',
-    source: item.link,
-    source_published_at: item.published_at
-  }));
-
+  const aiTechnology = items.slice(0, 3).map(item => enrichFallbackItem(item, 'technology'));
   const peInvestment = items.slice(3, 6).map(item => ({
-    topic: item.title,
-    topic_en: item.title,
-    topic_zh: item.title,
-    amount: '',
-    summary: item.summary || item.title,
-    summary_en: item.summary || item.title,
-    summary_zh: item.summary || item.title,
-    key_facts: [item.title, item.summary || item.title].filter(Boolean).slice(0, 2),
-    key_facts_en: [item.title, item.summary || item.title].filter(Boolean).slice(0, 2),
-    key_facts_zh: [item.title, item.summary || item.title].filter(Boolean).slice(0, 2),
-    framework: 'PE analysis: market size, growth quality, revenue model, margins, customer concentration, moat, and valuation driver.',
-    framework_en: 'PE analysis: market size, growth quality, revenue model, margins, customer concentration, moat, and valuation driver.',
-    framework_zh: '投行/PE 分析框架：市场空间、增长质量、收入模式、利润率、客户集中度、护城河与估值驱动。',
-    impact: 'Needs continued monitoring for capital markets, PE investment, and enterprise AI deployment.',
-    impact_en: 'Needs continued monitoring for capital markets, PE investment, and enterprise AI deployment.',
-    impact_zh: '需继续观察其对资本市场、PE 投资和企业 AI 部署的影响。',
-    analysis: 'The item matters because investors are increasingly separating AI narrative from measurable monetization, deployment quality, and margin impact.',
-    analysis_en: 'The item matters because investors are increasingly separating AI narrative from measurable monetization, deployment quality, and margin impact.',
-    analysis_zh: '这条信息的重要性在于，资本正在把 AI 叙事和可量化商业结果分开定价。收入质量、部署深度、利润率改善和客户留存会比单纯“有 AI 概念”更重要。',
-    forward_view: 'If this pattern continues, AI investment may concentrate around companies that control enterprise distribution, proprietary data, infrastructure leverage, or clear ROI measurement.',
-    forward_view_en: 'If this pattern continues, AI investment may concentrate around companies that control enterprise distribution, proprietary data, infrastructure leverage, or clear ROI measurement.',
-    forward_view_zh: '如果这个趋势延续，AI 投资会更集中流向能控制企业分发、专有数据、基础设施杠杆或清晰 ROI 衡量方式的公司。资本会更挑剔，但也会更愿意为确定性付溢价。',
-    source: item.link,
-    source_published_at: item.published_at
+    ...enrichFallbackItem(item, 'investment'),
+    amount: ''
   }));
 
   return {
@@ -129,6 +172,30 @@ Return JSON only, with this exact shape:
       "topic": "English topic for backward compatibility",
       "topic_en": "English topic",
       "topic_zh": "Simplified Chinese topic",
+      "entity_name": "English subject/entity name for backward compatibility",
+      "entity_name_en": "English subject/entity name",
+      "entity_name_zh": "Simplified Chinese subject/entity name",
+      "entity_type": "English entity type for backward compatibility",
+      "entity_type_en": "English entity type",
+      "entity_type_zh": "Simplified Chinese entity type",
+      "action": "English concrete action for backward compatibility",
+      "action_en": "English concrete action",
+      "action_zh": "Simplified Chinese concrete action",
+      "entity_profile": "English explanation of what the entity does for backward compatibility",
+      "entity_profile_en": "English explanation of what the entity does",
+      "entity_profile_zh": "Simplified Chinese explanation of what the entity does",
+      "leadership_background": "English founder/CEO/key-person background for backward compatibility",
+      "leadership_background_en": "English founder/CEO/key-person background",
+      "leadership_background_zh": "Simplified Chinese founder/CEO/key-person background",
+      "product_or_business": "English product, technology, or business model for backward compatibility",
+      "product_or_business_en": "English product, technology, or business model",
+      "product_or_business_zh": "Simplified Chinese product, technology, or business model",
+      "deal_or_product_details": "English deal/product details for backward compatibility",
+      "deal_or_product_details_en": "English deal/product details",
+      "deal_or_product_details_zh": "Simplified Chinese deal/product details",
+      "source_limitations": "English source limitations for backward compatibility",
+      "source_limitations_en": "English source limitations",
+      "source_limitations_zh": "Simplified Chinese source limitations",
       "summary": "English summary for backward compatibility",
       "summary_en": "English summary",
       "summary_zh": "Simplified Chinese summary",
@@ -156,6 +223,30 @@ Return JSON only, with this exact shape:
       "topic": "English topic for backward compatibility",
       "topic_en": "English topic",
       "topic_zh": "Simplified Chinese topic",
+      "entity_name": "English subject/entity name for backward compatibility",
+      "entity_name_en": "English subject/entity name",
+      "entity_name_zh": "Simplified Chinese subject/entity name",
+      "entity_type": "English entity type for backward compatibility",
+      "entity_type_en": "English entity type",
+      "entity_type_zh": "Simplified Chinese entity type",
+      "action": "English concrete action for backward compatibility",
+      "action_en": "English concrete action",
+      "action_zh": "Simplified Chinese concrete action",
+      "entity_profile": "English explanation of what the entity does for backward compatibility",
+      "entity_profile_en": "English explanation of what the entity does",
+      "entity_profile_zh": "Simplified Chinese explanation of what the entity does",
+      "leadership_background": "English founder/CEO/key-person background for backward compatibility",
+      "leadership_background_en": "English founder/CEO/key-person background",
+      "leadership_background_zh": "Simplified Chinese founder/CEO/key-person background",
+      "product_or_business": "English product, technology, or business model for backward compatibility",
+      "product_or_business_en": "English product, technology, or business model",
+      "product_or_business_zh": "Simplified Chinese product, technology, or business model",
+      "deal_or_product_details": "English deal/product details for backward compatibility",
+      "deal_or_product_details_en": "English deal/product details",
+      "deal_or_product_details_zh": "Simplified Chinese deal/product details",
+      "source_limitations": "English source limitations for backward compatibility",
+      "source_limitations_en": "English source limitations",
+      "source_limitations_zh": "Simplified Chinese source limitations",
       "amount": "",
       "summary": "English summary for backward compatibility",
       "summary_en": "English summary",
@@ -188,11 +279,19 @@ Return JSON only, with this exact shape:
 }
 
 Rules:
-- Use English for opening_line, opening_line_en, daily_summary, daily_summary_en, topic, topic_en, summary, summary_en, impact, and impact_en.
+- Use English for opening_line, opening_line_en, daily_summary, daily_summary_en, topic, topic_en, entity_name, entity_name_en, entity_type, entity_type_en, action, action_en, entity_profile, entity_profile_en, leadership_background, leadership_background_en, product_or_business, product_or_business_en, deal_or_product_details, deal_or_product_details_en, source_limitations, source_limitations_en, summary, summary_en, impact, and impact_en.
 - Use English for key_facts, key_facts_en, framework, framework_en, analysis, analysis_en, forward_view, forward_view_en, framework_analysis, framework_analysis_en, forward_summary, and forward_summary_en.
-- Use Simplified Chinese for opening_line_zh, daily_summary_zh, topic_zh, summary_zh, key_facts_zh, framework_zh, impact_zh, analysis_zh, forward_view_zh, framework_analysis_zh, and forward_summary_zh.
+- Use Simplified Chinese for opening_line_zh, daily_summary_zh, topic_zh, entity_name_zh, entity_type_zh, action_zh, entity_profile_zh, leadership_background_zh, product_or_business_zh, deal_or_product_details_zh, source_limitations_zh, summary_zh, key_facts_zh, framework_zh, impact_zh, analysis_zh, forward_view_zh, framework_analysis_zh, and forward_summary_zh.
 - opening_line_zh must be based on today's selected news, written as 2-3 concise internet-style sentences: lively, specific, slightly witty, and information-dense, but not clickbait and not childish. It must not reuse generic templates such as "技术在赶路，资本在看路牌".
 - daily_summary_zh and daily_summary_en must summarize today's actual information signals, not explain the report rules. They should mention both AI technology and PE/investment angles when data is available, and must be specific to today's selected items.
+- Every selected item must start from the concrete news spine: entity_name_zh, action_zh, entity_profile_zh, leadership_background_zh, product_or_business_zh, and deal_or_product_details_zh. These fields are mandatory for every item.
+- entity_name_zh must identify the specific company, product, model, person, regulator, investor, or policy actor.
+- action_zh must state what that subject did: raised money, launched a product, changed policy, warned regulators, acquired a company, signed a customer, reported earnings, or another concrete action. Do not replace the action with broad commentary.
+- entity_profile_zh must explain what the entity does in plain but professional language. For example, identify whether it is a frontier model lab, industrial AI startup, PE workflow platform, AI infrastructure provider, enterprise SaaS company, chip vendor, or regulator.
+- leadership_background_zh must include founder/CEO/key-person background only when the provided source text includes it or it is directly inferable from the provided source. If the provided source does not disclose it, write "来源未披露，需进一步核验。" Do not invent biographies.
+- product_or_business_zh must explain the product, technology, or business model if available. If unavailable, write "来源未披露，需进一步核验。"
+- deal_or_product_details_zh must preserve transaction, product, policy, or deployment details from the source. For PE/investment items, include amount, round, investors, use case, market, or valuation if present. For technology items, include model/product capability, customer, deployment, policy mechanism, or technical feature if present.
+- source_limitations_zh must briefly state any factual gaps, such as missing founder background, undisclosed terms, or limited RSS summary depth.
 - key_facts_zh must preserve concrete facts from the provided source item. Include company/product/deal names, disclosed numbers, product features, customer/deployment details, policy actions, market signals, or other specific information if present. If the source lacks numbers, do not invent them; preserve the concrete non-numeric signal instead.
 - framework_zh must name the analysis lens being applied, such as 产品分析框架, 技术栈分析框架, 平台生态分析框架, 监管/治理框架, 投行/PE 分析框架, or 资本市场定价框架.
 - analysis_zh must explain the professional significance of the item. For AI technology, write from the perspective of AI product/platform/infrastructure development. For PE/investment, write from the perspective of valuation, deployment, market structure, and capital allocation.

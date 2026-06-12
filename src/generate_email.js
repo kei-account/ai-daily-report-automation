@@ -92,6 +92,36 @@ function normalizeList(value) {
   return [value].filter(Boolean);
 }
 
+function firstText(...values) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return '';
+}
+
+function deriveEntityName(item) {
+  const topic = firstText(item.topic_zh, item.topic, item.summary_zh, item.summary);
+  const match = topic.match(/^([^:：|｜\-—–]+?)(?:[:：|｜\-—–]|\s)/);
+  return (match?.[1] || topic || '未识别主体').trim();
+}
+
+function entityField(item, zhKey, fallback = '来源未披露，需进一步核验。') {
+  const value = firstText(item[zhKey], item[zhKey.replace(/_zh$/, '')]);
+  return value || fallback;
+}
+
+function identityRows(item) {
+  return [
+    ['主体', firstText(item.entity_name_zh, item.entity_name) || deriveEntityName(item)],
+    ['行动', entityField(item, 'action_zh', firstText(item.summary_zh, item.summary) || '来源未披露，需进一步核验。')],
+    ['主体画像', entityField(item, 'entity_profile_zh')],
+    ['关键人物背景', entityField(item, 'leadership_background_zh')],
+    ['产品/商业模式', entityField(item, 'product_or_business_zh')],
+    ['融资/产品/政策细节', entityField(item, 'deal_or_product_details_zh')],
+    ['信息缺口', entityField(item, 'source_limitations_zh')]
+  ];
+}
+
 function formatTextItem(item, index, label) {
   const topic = item.topic_zh || item.topic;
   const summary = item.summary_zh || item.summary;
@@ -103,10 +133,14 @@ function formatTextItem(item, index, label) {
   const factLines = keyFacts.length
     ? keyFacts.map(fact => `   - ${fact}`).join('\n')
     : `   - ${summary}`;
+  const identityLines = identityRows(item)
+    .map(([name, value]) => `   ${name}：${value}`)
+    .join('\n');
 
   return [
     `${index + 1}. ${topic}`,
     `   ${label}${item.amount ? ` / 规模：${formatAmount(item.amount)}` : ''}`,
+    identityLines,
     `   具体信息：`,
     factLines,
     `   事件要点：${summary}`,
@@ -188,6 +222,13 @@ function itemCard(item, index, label, accentColor, bgColor) {
   const frameworkHtml = framework
     ? `<div style="font-size:12px;line-height:1.6;color:#6b7280;margin:0 0 10px 0;"><strong style="color:#374151;">分析框架：</strong>${escapeHtml(framework)}</div>`
     : '';
+  const identityHtml = identityRows(item)
+    .map(([name, value]) => `
+      <tr>
+        <td style="padding:5px 8px 5px 0;width:104px;vertical-align:top;font-size:12px;line-height:1.55;color:#64748b;font-weight:800;">${escapeHtml(name)}</td>
+        <td style="padding:5px 0;font-size:13px;line-height:1.65;color:#1f2937;">${escapeHtml(value)}</td>
+      </tr>`)
+    .join('');
 
   return `
     <tr>
@@ -201,7 +242,14 @@ function itemCard(item, index, label, accentColor, bgColor) {
                 ${item.amount ? `<span style="display:inline-block;margin-left:8px;color:#374151;font-size:12px;">规模：${escapeHtml(formatAmount(item.amount))}</span>` : ''}
               </div>
               <div style="font-size:17px;line-height:1.45;font-weight:700;color:#111827;margin-bottom:8px;">${escapeHtml(topic)}</div>
-              <div style="font-size:14px;line-height:1.7;color:#374151;margin-bottom:10px;">${escapeHtml(summary)}</div>
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#fbfbfb;border:1px solid #eef2f7;border-radius:12px;margin-bottom:10px;">
+                <tr>
+                  <td style="padding:10px 13px;">
+                    <div style="font-weight:800;color:#0f172a;margin-bottom:4px;font-size:13px;">主体与行动</div>
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">${identityHtml}</table>
+                  </td>
+                </tr>
+              </table>
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f8fafc;border-radius:10px;margin-bottom:10px;">
                 <tr>
                   <td style="padding:11px 14px;font-size:13px;line-height:1.65;color:#334155;">
@@ -211,6 +259,7 @@ function itemCard(item, index, label, accentColor, bgColor) {
                 </tr>
               </table>
               ${frameworkHtml}
+              <div style="font-size:14px;line-height:1.7;color:#374151;margin-bottom:10px;"><strong style="color:#111827;">事件要点：</strong>${escapeHtml(summary)}</div>
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f9fafb;border-radius:10px;">
                 <tr>
                   <td style="padding:12px 14px;font-size:13px;line-height:1.7;color:#4b5563;">
