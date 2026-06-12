@@ -115,11 +115,15 @@ function itemBlocks(item) {
   const topic = item.topic_en || item.topic;
   const summary = item.summary_en || item.summary;
   const impact = item.impact_en || item.impact || 'Needs continued monitoring for business and investment implications.';
+  const analysis = item.analysis_en || item.analysis;
+  const forwardView = item.forward_view_en || item.forward_view;
 
   return [
     heading2(topic),
     labeledParagraph('Key point', summary),
     labeledParagraph('Impact', impact),
+    ...(analysis ? [labeledParagraph('Professional analysis', analysis)] : []),
+    ...(forwardView ? [labeledParagraph('Forward view', forwardView)] : []),
     ...(item.amount ? [bullet(`Deal size: ${item.amount}`)] : []),
     sourceLine(item)
   ];

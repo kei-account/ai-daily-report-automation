@@ -88,12 +88,15 @@ function formatTextItem(item, index, label) {
   const topic = item.topic_zh || item.topic;
   const summary = item.summary_zh || item.summary;
   const impact = item.impact_zh || item.impact || '需继续观察其对产品策略、资本配置和企业采用节奏的影响。';
+  const analysis = item.analysis_zh || item.analysis || '';
+  const forwardView = item.forward_view_zh || item.forward_view || '';
 
   return [
     `${index + 1}. ${topic}`,
     `   ${label}${item.amount ? ` / 规模：${formatAmount(item.amount)}` : ''}`,
-    `   要点：${summary}`,
-    `   影响：${impact}`,
+    `   事件要点：${summary}`,
+    `   专业解读：${analysis || impact}`,
+    `   前瞻观察：${forwardView || impact}`,
     `   来源时间：${formatSourceTime(item.source_published_at)}`,
     `   来源：${item.source || '未提供'}`
   ].join('\n');
@@ -150,6 +153,8 @@ function itemCard(item, index, label, accentColor, bgColor) {
   const topic = item.topic_zh || item.topic;
   const summary = item.summary_zh || item.summary;
   const impact = item.impact_zh || item.impact || '需继续观察其对产品策略、资本配置和企业采用节奏的影响。';
+  const analysis = item.analysis_zh || item.analysis || impact;
+  const forwardView = item.forward_view_zh || item.forward_view || impact;
   const source = item.source || '';
   const sourceHtml = source
     ? `<a href="${escapeHtml(source)}" style="color:#2563eb;text-decoration:none;">查看来源</a>`
@@ -167,11 +172,20 @@ function itemCard(item, index, label, accentColor, bgColor) {
                 ${item.amount ? `<span style="display:inline-block;margin-left:8px;color:#374151;font-size:12px;">规模：${escapeHtml(formatAmount(item.amount))}</span>` : ''}
               </div>
               <div style="font-size:17px;line-height:1.45;font-weight:700;color:#111827;margin-bottom:8px;">${escapeHtml(topic)}</div>
-              <div style="font-size:14px;line-height:1.7;color:#374151;margin-bottom:10px;">${escapeHtml(summary)}</div>
+              <div style="font-size:14px;line-height:1.7;color:#374151;margin-bottom:12px;">${escapeHtml(summary)}</div>
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f9fafb;border-radius:10px;">
                 <tr>
-                  <td style="padding:10px 12px;font-size:13px;line-height:1.65;color:#4b5563;">
-                    <strong style="color:#111827;">影响：</strong>${escapeHtml(impact)}
+                  <td style="padding:12px 14px;font-size:13px;line-height:1.7;color:#4b5563;">
+                    <div style="font-weight:800;color:#111827;margin-bottom:4px;">专业解读</div>
+                    <div>${escapeHtml(analysis)}</div>
+                  </td>
+                </tr>
+              </table>
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#fff7ed;border-left:3px solid #f97316;border-radius:10px;margin-top:8px;">
+                <tr>
+                  <td style="padding:11px 14px;font-size:13px;line-height:1.7;color:#7c2d12;">
+                    <div style="font-weight:800;color:#9a3412;margin-bottom:4px;">前瞻观察</div>
+                    <div>${escapeHtml(forwardView)}</div>
                   </td>
                 </tr>
               </table>
