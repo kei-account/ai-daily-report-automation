@@ -6,8 +6,22 @@ const { generateReport } = require('./create_report');
 const { generateChineseEmail, generateChineseEmailHtml } = require('./generate_email');
 const { sendEmail } = require('./send_email');
 
+function resolveReportDate() {
+  const dateArg = process.argv.find(arg => arg.startsWith('--date='));
+  const date = process.env.REPORT_DATE || (dateArg ? dateArg.slice('--date='.length) : '');
+
+  if (date) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      throw new Error(`REPORT_DATE must use YYYY-MM-DD format, got: ${date}`);
+    }
+    return date;
+  }
+
+  return new Date().toISOString().slice(0, 10);
+}
+
 async function main() {
-  const date = new Date().toISOString().slice(0, 10);
+  const date = resolveReportDate();
 
   console.log(`Starting daily AI report pipeline for ${date}`);
 
@@ -48,4 +62,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { main };
+module.exports = { main, resolveReportDate };

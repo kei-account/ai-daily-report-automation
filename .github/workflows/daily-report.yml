@@ -1,9 +1,20 @@
 name: Daily AI Report
 
 on:
-  # Scheduling is handled by cron-job.org via workflow_dispatch.
-  # Keep GitHub's built-in schedule disabled to avoid duplicate daily emails.
+  # cron-job.org remains the primary 09:00 JST workflow_dispatch trigger.
+  # GitHub's native schedule is a backup in case the external PAT expires.
+  schedule:
+    - cron: "15 0 * * *"
   workflow_dispatch:
+    inputs:
+      report_date:
+        description: "Report date in YYYY-MM-DD format. Defaults to today's date in Asia/Tokyo."
+        required: false
+        type: string
+
+concurrency:
+  group: daily-ai-report-production
+  cancel-in-progress: false
 
 jobs:
   send-daily-report:
@@ -11,19 +22,44 @@ jobs:
     timeout-minutes: 30
 
     steps:
+      - name: Resolve report date
+        id: report-date
+        run: |
+          REPORT_DATE="${{ github.event.inputs.report_date }}"
+          if [ -z "$REPORT_DATE" ]; then
+            REPORT_DATE="$(TZ=Asia/Tokyo date +'%Y-%m-%d')"
+          fi
+          if ! [[ "$REPORT_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            echo "Invalid report_date: $REPORT_DATE" >&2
+            exit 1
+          fi
+          echo "REPORT_DATE=$REPORT_DATE" >> "$GITHUB_ENV"
+          echo "date=$REPORT_DATE" >> "$GITHUB_OUTPUT"
+
+      - name: Restore sent marker
+        id: sent-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .sent-cache/${{ steps.report-date.outputs.date }}
+          key: ai-daily-report-sent-${{ steps.report-date.outputs.date }}
+
       - name: Checkout repository
+        if: steps.sent-cache.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
 
       - name: Set up Node.js
+        if: steps.sent-cache.outputs.cache-hit != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
       - name: Install dependencies
+        if: steps.sent-cache.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Generate and send report
+        if: steps.sent-cache.outputs.cache-hit != 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
@@ -32,6 +68,23 @@ jobs:
           REPORT_RECIPIENT: ${{ secrets.REPORT_RECIPIENT }}
           REPORT_RECIPIENT_NAME: ${{ secrets.REPORT_RECIPIENT_NAME }}
         run: npm run daily
+
+      - name: Save sent marker
+        if: steps.sent-cache.outputs.cache-hit != 'true' && success()
+        run: |
+          mkdir -p ".sent-cache/${REPORT_DATE}"
+          date -u +'%Y-%m-%dT%H:%M:%SZ' > ".sent-cache/${REPORT_DATE}/sent_at"
+
+      - name: Cache sent marker
+        if: steps.sent-cache.outputs.cache-hit != 'true' && success()
+        uses: actions/cache/save@v4
+        with:
+          path: .sent-cache/${{ steps.report-date.outputs.date }}
+          key: ai-daily-report-sent-${{ steps.report-date.outputs.date }}
+
+      - name: Already sent
+        if: steps.sent-cache.outputs.cache-hit == 'true'
+        run: echo "AI daily report for $REPORT_DATE was already sent; skipping duplicate delivery."
 
       - name: Upload generated artifacts
         if: always()
